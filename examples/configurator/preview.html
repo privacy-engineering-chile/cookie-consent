@@ -6,7 +6,9 @@
     <link rel="stylesheet" href="../../styles/cookie-consent-cl.css" />
     <style>
       :root {
-        background: #f5f7fb;
+        background: #eef4ff;
+        color: #0f172a;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       }
 
       body {
@@ -14,108 +16,208 @@
         margin: 0;
         overflow: hidden;
         background:
-          radial-gradient(circle at 18% 22%, rgba(15, 107, 61, 0.18), transparent 26%),
-          radial-gradient(circle at 82% 20%, rgba(0, 95, 204, 0.16), transparent 24%),
-          radial-gradient(circle at 52% 76%, rgba(154, 91, 19, 0.14), transparent 30%),
-          linear-gradient(135deg, #ffffff, #eef3f8);
+          radial-gradient(circle at 16% 10%, rgba(37, 99, 235, 0.18), transparent 22rem),
+          radial-gradient(circle at 88% 18%, rgba(16, 185, 129, 0.16), transparent 19rem),
+          linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
       }
 
-      body.theme-night {
-        background:
-          radial-gradient(circle at 18% 22%, rgba(125, 211, 252, 0.18), transparent 26%),
-          radial-gradient(circle at 82% 20%, rgba(167, 139, 250, 0.18), transparent 24%),
-          radial-gradient(circle at 52% 76%, rgba(45, 212, 191, 0.12), transparent 30%),
-          linear-gradient(135deg, #0f172a, #1e293b);
+      .site {
+        position: relative;
+        min-height: 100vh;
+        padding: 24px;
       }
 
-      body::before {
-        content: "";
-        position: fixed;
-        inset: 28px;
-        border: 1px solid rgba(82, 96, 112, 0.16);
-        border-radius: 18px;
-        background:
-          linear-gradient(90deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.28)),
-          repeating-linear-gradient(0deg, transparent 0 38px, rgba(82, 96, 112, 0.06) 38px 39px),
-          repeating-linear-gradient(90deg, transparent 0 38px, rgba(82, 96, 112, 0.05) 38px 39px);
-        box-shadow: 0 24px 80px rgba(24, 34, 53, 0.14);
+      .site-shell {
+        min-height: calc(100vh - 48px);
+        overflow: hidden;
+        border: 1px solid rgba(148, 163, 184, 0.28);
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.74);
+        box-shadow: 0 30px 90px rgba(15, 23, 42, 0.16);
+        backdrop-filter: blur(18px);
       }
 
-      body.theme-night::before {
-        border-color: rgba(226, 232, 240, 0.12);
-        background:
-          linear-gradient(90deg, rgba(15, 23, 42, 0.68), rgba(15, 23, 42, 0.32)),
-          repeating-linear-gradient(0deg, transparent 0 38px, rgba(226, 232, 240, 0.06) 38px 39px),
-          repeating-linear-gradient(90deg, transparent 0 38px, rgba(226, 232, 240, 0.05) 38px 39px);
-        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
-      }
-
-      .preview-toolbar {
-        position: fixed;
-        z-index: 2147483600;
-        top: 18px;
-        left: 18px;
-        right: 18px;
+      .site-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 10px;
-        pointer-events: none;
+        gap: 18px;
+        padding: 18px 20px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.22);
       }
 
-      .preview-control {
-        display: inline-flex;
+      .brand {
+        display: flex;
         align-items: center;
-        justify-content: center;
-        min-height: 40px;
-        border: 1px solid rgba(24, 34, 53, 0.2);
+        gap: 10px;
+        font-weight: 900;
+      }
+
+      .brand-mark {
+        width: 34px;
+        height: 34px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #2563eb, #10b981);
+      }
+
+      .nav {
+        display: flex;
+        gap: 10px;
+      }
+
+      .nav span,
+      .content-line,
+      .content-card span {
+        display: block;
         border-radius: 999px;
-        padding: 8px 12px;
-        background: rgba(255, 255, 255, 0.78);
-        color: #172033;
-        font: 700 0.92rem system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        cursor: pointer;
-        pointer-events: auto;
-        backdrop-filter: blur(12px);
-        box-shadow: 0 12px 32px rgba(24, 34, 53, 0.14);
+        background: #dbeafe;
       }
 
-      body.theme-night .preview-control {
-        border-color: rgba(226, 232, 240, 0.18);
-        background: rgba(15, 23, 42, 0.72);
-        color: #f8fafc;
+      .nav span {
+        width: 62px;
+        height: 10px;
       }
 
+      .site-content {
+        display: grid;
+        gap: 22px;
+        padding: 34px 26px 140px;
+      }
+
+      .content-line {
+        height: 22px;
+        width: min(72%, 520px);
+        background: #bfdbfe;
+      }
+
+      .content-line:nth-child(2) {
+        width: min(48%, 360px);
+        height: 14px;
+        background: #dbeafe;
+      }
+
+      .content-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .content-card {
+        min-height: 150px;
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        border-radius: 20px;
+        padding: 18px;
+        background: #ffffff;
+      }
+
+      .content-card span {
+        height: 12px;
+        margin-bottom: 12px;
+      }
+
+      .content-card span:first-child {
+        width: 74%;
+        background: #bfdbfe;
+      }
+
+      .content-card span:nth-child(2) {
+        width: 92%;
+      }
+
+      .content-card span:nth-child(3) {
+        width: 54%;
+      }
+
+      @media (max-width: 700px) {
+        .site {
+          padding: 12px;
+        }
+
+        .site-shell {
+          min-height: calc(100vh - 24px);
+          border-radius: 22px;
+        }
+
+        .nav {
+          display: none;
+        }
+
+        .content-grid {
+          grid-template-columns: 1fr;
+        }
+      }
     </style>
   </head>
   <body>
-    <div class="preview-toolbar" aria-label="Controles de vista previa">
-      <button class="preview-control" type="button" id="theme-toggle" aria-label="Cambiar modo dia o noche">☀︎</button>
-      <button class="preview-control" type="button" id="restart-preview">Reiniciar</button>
-    </div>
+    <main class="site" aria-hidden="true">
+      <div class="site-shell">
+        <header class="site-header">
+          <div class="brand"><span class="brand-mark"></span> Sitio demo</div>
+          <nav class="nav"><span></span><span></span><span></span></nav>
+        </header>
+        <section class="site-content">
+          <span class="content-line"></span>
+          <span class="content-line"></span>
+          <div class="content-grid">
+            <article class="content-card"><span></span><span></span><span></span></article>
+            <article class="content-card"><span></span><span></span><span></span></article>
+            <article class="content-card"><span></span><span></span><span></span></article>
+          </div>
+        </section>
+      </div>
+    </main>
 
     <script type="module">
       import { CookieConsentCL } from "../../src/index.ts";
 
-      const themeToggle = document.querySelector("#theme-toggle");
-      let currentConfig = null;
+      function clearCookieUi() {
+        [
+          "#cccl-banner",
+          "#cccl-banner-backdrop",
+          "#cccl-modal-root",
+          "#cccl-preferences-notice",
+          "#cccl-cookie-icon"
+        ].forEach((selector) => document.querySelector(selector)?.remove());
+      }
 
-      document.querySelector("#restart-preview").addEventListener("click", () => {
+      function applyDesign(design) {
+        const radius = `${design?.borderRadius ?? 18}px`;
+        document.documentElement.style.setProperty("--preview-radius", radius);
+        const style = document.querySelector("#preview-radius-style") || document.createElement("style");
+        style.id = "preview-radius-style";
+        style.textContent = `
+          .cccl-banner,
+          .cccl-modal,
+          .cccl-preferences-notice,
+          .cccl-cookie-icon {
+            border-radius: var(--preview-radius) !important;
+          }
+        `;
+        document.head.append(style);
+      }
+
+      function renderMode(mode) {
+        if (mode === "preferences") {
+          CookieConsentCL.resetConsent();
+          CookieConsentCL.openPreferences();
+          return;
+        }
+
+        if (mode === "icon") {
+          CookieConsentCL.acceptAll();
+          document.querySelector("#cccl-preferences-notice")?.remove();
+          return;
+        }
+
         CookieConsentCL.resetConsent();
-      });
-
-      themeToggle.addEventListener("click", () => {
-        document.body.classList.toggle("theme-night");
-        themeToggle.textContent = document.body.classList.contains("theme-night") ? "☾" : "☀︎";
-      });
+      }
 
       window.addEventListener("message", (event) => {
         if (event.data?.type !== "cccl-preview-config") return;
-        currentConfig = event.data.config;
+        clearCookieUi();
+        applyDesign(event.data.design);
         CookieConsentCL.init(event.data.config);
-        if (event.data.restart) {
-          CookieConsentCL.resetConsent();
-        }
+        renderMode(event.data.restart ? "banner" : event.data.mode || "banner");
       });
 
       window.parent.postMessage({ type: "cccl-preview-ready" }, "*");
