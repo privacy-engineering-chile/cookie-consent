@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es-CL">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cookie-consent-cl · Script blocking</title>
+    <link rel="stylesheet" href="../../styles/cookie-consent-cl.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Activacion de scripts por consentimiento</h1>
+      <p>Abre la consola y acepta analitica para ejecutar el script bloqueado.</p>
+      <p>
+        Estado del video:
+        <strong id="video-status">bloqueado hasta autorizar marketing</strong>
+      </p>
+      <p>
+        Cookies de muestra:
+        <strong id="cookie-status">sin decision</strong>
+      </p>
+      <button type="button" onclick="CookieConsentCL.openPreferences()">Cambiar preferencias</button>
+    </main>
+
+    <script type="text/plain" data-cookie-consent="analytics">
+      console.log("Analytics code goes here");
+      window.demoAnalyticsLoaded = true;
+    </script>
+
+    <iframe
+      title="Video demo bloqueado"
+      width="560"
+      height="315"
+      data-cookie-consent="marketing"
+      data-src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+    ></iframe>
+
+    <script type="module">
+      import { CookieConsentCL } from "../../src/index.ts";
+
+      const params = new URLSearchParams(window.location.search);
+
+      function setSampleCookie(name, value) {
+        document.cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}; path=/; SameSite=Lax`;
+      }
+
+      const sampleCookieNames = ["cccl_blocking_analytics", "cccl_blocking_marketing", "cccl_blocking_preferences"];
+
+      function updateSampleCookies(consent) {
+        if (consent.categories.analytics) setSampleCookie("cccl_blocking_analytics", "accepted");
+        if (consent.categories.marketing) setSampleCookie("cccl_blocking_marketing", "accepted");
+        if (consent.categories.preferences) setSampleCookie("cccl_blocking_preferences", "accepted");
+        const visibleCookies = sampleCookieNames.filter((name) => document.cookie.includes(`${name}=accepted`));
+        document.querySelector("#cookie-status").textContent = visibleCookies.join("; ") || "sin cookies no necesarias";
+      }
+
+      CookieConsentCL.init({
+        siteId: params.get("siteId") || "demo-script-blocking",
+        policyVersion: "2026-01-01",
+        bannerVersion: "1.0.0",
+        cookies: [
+          {
+            name: "cccl_blocking_analytics",
+            provider: "Demo local",
+            category: "analytics",
+            duration: "Sesion",
+            purpose: "Probar una cookie creada al autorizar analitica."
+          },
+          {
+            name: "cccl_blocking_marketing",
+            provider: "Demo local",
+            category: "marketing",
+            duration: "Sesion",
+            purpose: "Probar una cookie creada al autorizar marketing y el video embebido."
+          },
+          {
+            name: "cccl_blocking_preferences",
+            provider: "Demo local",
+            category: "preferences",
+            duration: "Sesion",
+            purpose: "Probar una cookie creada al autorizar preferencias."
+          }
+        ],
+        onConsentChange(consent) {
+          document.querySelector("#video-status").textContent = consent.categories.marketing
+            ? "cargado por consentimiento de marketing"
+            : "bloqueado porque marketing no esta autorizado";
+          updateSampleCookies(consent);
+        }
+      });
+    </script>
+  </body>
+</html>

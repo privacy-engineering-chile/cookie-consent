@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="es-CL">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cookie-consent-cl · Vanilla HTML</title>
+    <link rel="stylesheet" href="../../styles/cookie-consent-cl.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Demo basica</h1>
+      <p>Este ejemplo muestra el banner, el modal de preferencias y el almacenamiento local.</p>
+      <button type="button" onclick="CookieConsentCL.openPreferences()">Cambiar preferencias</button>
+      <p>
+        Cookies de muestra:
+        <strong id="cookie-status">sin decision</strong>
+      </p>
+    </main>
+    <script type="module">
+      import { CookieConsentCL } from "../../src/index.ts";
+      const params = new URLSearchParams(window.location.search);
+
+      function setSampleCookie(name, value) {
+        document.cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}; path=/; SameSite=Lax`;
+      }
+
+      const sampleCookieNames = ["cccl_demo_analytics", "cccl_demo_marketing", "cccl_demo_preferences"];
+
+      function updateSampleCookies(consent) {
+        if (consent.categories.analytics) setSampleCookie("cccl_demo_analytics", "accepted");
+        if (consent.categories.marketing) setSampleCookie("cccl_demo_marketing", "accepted");
+        if (consent.categories.preferences) setSampleCookie("cccl_demo_preferences", "accepted");
+        const visibleCookies = sampleCookieNames.filter((name) => document.cookie.includes(`${name}=accepted`));
+        document.querySelector("#cookie-status").textContent = visibleCookies.join("; ") || "sin cookies no necesarias";
+      }
+
+      CookieConsentCL.init({
+        siteId: params.get("siteId") || "demo-vanilla",
+        policyVersion: "2026-01-01",
+        bannerVersion: "1.0.0",
+        cookiePolicyUrl: "/politica-de-cookies",
+        privacyPolicyUrl: "/politica-de-privacidad",
+        cookies: [
+          {
+            name: "cccl_demo_analytics",
+            provider: "Demo local",
+            category: "analytics",
+            duration: "Sesion",
+            purpose: "Mostrar como se autoriza una cookie de analitica."
+          },
+          {
+            name: "cccl_demo_marketing",
+            provider: "Demo local",
+            category: "marketing",
+            duration: "Sesion",
+            purpose: "Mostrar como se autoriza una cookie de marketing."
+          },
+          {
+            name: "cccl_demo_preferences",
+            provider: "Demo local",
+            category: "preferences",
+            duration: "Sesion",
+            purpose: "Mostrar como se autoriza una cookie de preferencias."
+          }
+        ],
+        onConsentChange: updateSampleCookies
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1087 @@
+<!doctype html>
+<html lang="es-CL">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cookie-consent-cl · Configurador</title>
+    <style>
+      :root {
+        color: #182235;
+        background: #f3f6fa;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      body {
+        margin: 0;
+      }
+
+      .builder {
+        display: grid;
+        grid-template-columns: minmax(460px, 0.95fr) minmax(460px, 1.05fr);
+        min-height: 100vh;
+      }
+
+      .config {
+        overflow: auto;
+        max-height: 100vh;
+        padding: 28px clamp(18px, 3vw, 34px);
+        background: #ffffff;
+        border-right: 1px solid #d8dee8;
+      }
+
+      .intro {
+        max-width: 680px;
+        margin-inline: auto;
+        margin-bottom: 18px;
+      }
+
+      .preview-pane {
+        position: sticky;
+        top: 0;
+        display: grid;
+        height: 100vh;
+        padding: 0;
+        box-sizing: border-box;
+        background: #e9eef5;
+      }
+
+      .preview-frame-wrap {
+        min-height: 0;
+        overflow: hidden;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        transition:
+          width 0.22s ease,
+          margin 0.22s ease,
+          border-radius 0.22s ease,
+          box-shadow 0.22s ease;
+      }
+
+      iframe {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border: 0;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 8px;
+        font-size: 1.55rem;
+        letter-spacing: 0;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 1.02rem;
+        letter-spacing: 0;
+      }
+
+      h3 {
+        margin: 18px 0 8px;
+        font-size: 0.95rem;
+      }
+
+      p {
+        color: #526070;
+        line-height: 1.52;
+      }
+
+      label,
+      fieldset {
+        display: grid;
+        gap: 7px;
+        margin-top: 12px;
+      }
+
+      .accordion-section {
+        max-width: 680px;
+        margin-inline: auto;
+        margin-top: 12px;
+        border: 1px solid #d8dee8;
+        border-radius: 12px;
+        background: #ffffff;
+        box-shadow: 0 8px 28px rgba(24, 34, 53, 0.05);
+      }
+
+      .accordion-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        min-height: 58px;
+        border: 0;
+        padding: 0 14px;
+        background: transparent;
+        color: #182235;
+        text-align: left;
+        cursor: pointer;
+      }
+
+      .accordion-toggle::after {
+        content: "+";
+        display: grid;
+        place-items: center;
+        width: 28px;
+        height: 28px;
+        border: 1px solid #c7ceda;
+        border-radius: 999px;
+        font-size: 1.1rem;
+      }
+
+      .accordion-toggle[aria-expanded="true"]::after {
+        content: "-";
+      }
+
+      .accordion-panel {
+        padding: 0 14px 18px;
+      }
+
+      .accordion-panel[hidden] {
+        display: none;
+      }
+
+      fieldset {
+        padding: 14px;
+        border: 1px solid #d8dee8;
+        border-radius: 8px;
+        background: #fbfcfe;
+      }
+
+      legend {
+        padding: 0 6px;
+        font-weight: 800;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #aab3c2;
+        border-radius: 6px;
+        padding: 9px 10px;
+        background: #ffffff;
+        font: inherit;
+      }
+
+      textarea {
+        min-height: 76px;
+        resize: vertical;
+      }
+
+      input[type="color"] {
+        min-height: 42px;
+        padding: 4px;
+      }
+
+      input[type="radio"],
+      input[type="checkbox"],
+      input[type="range"] {
+        width: auto;
+      }
+
+      .inline {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .section-note {
+        margin: 8px 0 12px;
+        font-size: 0.92rem;
+      }
+
+      .field-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        align-items: end;
+      }
+
+      .consent-card {
+        gap: 12px;
+      }
+
+      .consent-card__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .consent-card__header legend {
+        padding: 0;
+      }
+
+      .ghost-button {
+        min-height: 34px;
+        border: 1px solid #c7ceda;
+        border-radius: 6px;
+        padding: 7px 10px;
+        background: #ffffff;
+        color: #182235;
+        font: inherit;
+        font-weight: 750;
+        cursor: pointer;
+      }
+
+      .ghost-button:disabled {
+        cursor: not-allowed;
+        opacity: 0.55;
+      }
+
+      .signal-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px 12px;
+        margin-top: 8px;
+      }
+
+      .signal-grid label {
+        margin: 0;
+        padding: 8px;
+        border: 1px solid #d8dee8;
+        border-radius: 7px;
+        background: #ffffff;
+        font-size: 0.9rem;
+      }
+
+      .integration-box {
+        display: grid;
+        gap: 8px;
+        margin-top: 10px;
+        padding: 12px;
+        border: 1px dashed #aab3c2;
+        border-radius: 8px;
+        background: #ffffff;
+      }
+
+      .integration-box code {
+        overflow-wrap: anywhere;
+        color: #334155;
+        font-size: 0.86rem;
+      }
+
+      .install-step {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 1px solid #d8dee8;
+      }
+
+      .install-step:first-of-type {
+        border-top: 0;
+        padding-top: 0;
+      }
+
+      .install-step h3 {
+        margin: 0;
+      }
+
+      .install-step p {
+        margin-bottom: 0;
+      }
+
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .choice-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .choice-grid--wide {
+        grid-template-columns: 1fr;
+      }
+
+      .choice {
+        display: grid;
+        gap: 10px;
+        margin: 0;
+        padding: 16px;
+        border: 1px solid #d8dee8;
+        border-radius: 12px;
+        background: #fbfcfe;
+        cursor: pointer;
+      }
+
+      .choice strong {
+        font-size: 0.96rem;
+      }
+
+      .choice small {
+        color: #526070;
+        line-height: 1.35;
+      }
+
+      .choice:has(input:checked) {
+        border-color: #0f6b3d;
+        background: #f7fff9;
+        box-shadow: 0 0 0 3px rgba(15, 107, 61, 0.12);
+      }
+
+      .swatches {
+        display: flex;
+        gap: 5px;
+      }
+
+      .swatch {
+        width: 22px;
+        height: 22px;
+        border: 1px solid #c7ceda;
+        border-radius: 999px;
+      }
+
+      .position-card {
+        position: relative;
+        height: 76px;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        background:
+          linear-gradient(180deg, #ffffff, #eef3f8);
+      }
+
+      .position-card::after {
+        content: "";
+        position: absolute;
+        width: 42px;
+        height: 18px;
+        border-radius: 4px;
+        background: #182235;
+        box-shadow: 0 6px 18px rgba(24, 34, 53, 0.22);
+      }
+
+      .pos-center::after {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .pos-bottom::after {
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .pos-bottom-left::after {
+        bottom: 8px;
+        left: 8px;
+      }
+
+      .pos-bottom-right::after {
+        right: 8px;
+        bottom: 8px;
+      }
+
+      .conditional[hidden] {
+        display: none;
+      }
+
+      .contrast {
+        padding: 10px;
+        border-radius: 6px;
+        background: #edf7ed;
+        font-size: 0.92rem;
+      }
+
+      .contrast.warn {
+        background: #fff4d6;
+      }
+
+      .checklist {
+        display: grid;
+        gap: 8px;
+        max-width: 680px;
+        margin: 0 auto 16px;
+        padding: 14px;
+        border: 1px solid #d8dee8;
+        border-radius: 12px;
+        background: #f8fff8;
+      }
+
+      .checklist strong {
+        font-size: 0.95rem;
+      }
+
+      .checklist ul {
+        display: grid;
+        gap: 6px;
+        margin: 0;
+        padding-left: 18px;
+        color: #526070;
+        font-size: 0.92rem;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .tool-button {
+        min-height: 40px;
+        border: 1px solid #182235;
+        border-radius: 6px;
+        padding: 9px 12px;
+        background: #182235;
+        color: #ffffff;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .tool-button.secondary {
+        background: #ffffff;
+        color: #182235;
+      }
+
+      .summary {
+        display: none;
+      }
+
+      .pill {
+        border-radius: 999px;
+        padding: 6px 9px;
+        background: #ffffff;
+        border: 1px solid #d8dee8;
+        font-size: 0.86rem;
+      }
+
+      pre {
+        overflow: auto;
+        margin: 0;
+        padding: 16px;
+        border-radius: 8px;
+        background: #07101f;
+        color: #e5eef8;
+        line-height: 1.45;
+      }
+
+      @media (max-width: 980px) {
+        .builder {
+          grid-template-columns: 1fr;
+        }
+
+        .config,
+        .preview-pane {
+          max-height: none;
+          height: auto;
+        }
+
+        .preview-frame-wrap {
+          height: 680px;
+        }
+      }
+
+      @media (max-width: 620px) {
+        .grid-3,
+        .choice-grid,
+        .signal-grid,
+        .field-row {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="builder">
+      <form class="config" id="config-form">
+        <div class="intro">
+          <h1>Crea tu banner de cookies para Chile</h1>
+          <p>Asistente de configuracion para un banner claro, especifico por categoria y sin dark patterns, creado con cookie-consent-cl.</p>
+        </div>
+        <aside class="checklist" aria-label="Buenas practicas activas">
+          <strong>Modo etico recomendado activado</strong>
+          <ul>
+            <li>Rechazar no necesarias es tan visible como aceptar.</li>
+            <li>Las categorias opcionales parten desactivadas.</li>
+            <li>El usuario puede revisar preferencias despues.</li>
+          </ul>
+        </aside>
+
+        <section class="accordion-section" data-accordion-section>
+          <button class="accordion-toggle" type="button" id="accordion-colors" aria-expanded="true" aria-controls="panel-colors">
+            <h2>Esquema de color</h2>
+          </button>
+          <div class="accordion-panel" id="panel-colors" aria-labelledby="accordion-colors">
+            <div class="choice-grid" id="theme-options"></div>
+            <div class="grid-3">
+              <label>Fondo <input type="color" name="backgroundColor" /></label>
+              <label>Texto <input type="color" name="textColor" /></label>
+              <label>Primario <input type="color" name="primaryColor" /></label>
+            </div>
+            <p id="contrast-result" class="contrast">Contraste suficiente.</p>
+          </div>
+        </section>
+
+        <section class="accordion-section" data-accordion-section>
+          <button class="accordion-toggle" type="button" id="accordion-position" aria-expanded="true" aria-controls="panel-position">
+            <h2>Posicion</h2>
+          </button>
+          <div class="accordion-panel" id="panel-position" aria-labelledby="accordion-position">
+            <div class="choice-grid">
+              <label class="choice"><input type="radio" name="position" value="center" /> <strong>Centro</strong><small>Mas visible; util cuando quieres bloquear el fondo.</small><span class="position-card pos-center"></span></label>
+              <label class="choice"><input type="radio" name="position" value="bottom" checked /> <strong>Inferior centro</strong><small>Recomendado para la mayoria de sitios.</small><span class="position-card pos-bottom"></span></label>
+              <label class="choice"><input type="radio" name="position" value="bottom-left" /> <strong>Inferior izquierda</strong><small>Bueno para layouts simples y contenido editorial.</small><span class="position-card pos-bottom-left"></span></label>
+              <label class="choice"><input type="radio" name="position" value="bottom-right" /> <strong>Inferior derecha</strong><small>Bueno para sitios con navegacion lateral izquierda.</small><span class="position-card pos-bottom-right"></span></label>
+            </div>
+          </div>
+        </section>
+
+        <section class="accordion-section" data-accordion-section>
+          <button class="accordion-toggle" type="button" id="accordion-icon" aria-expanded="true" aria-controls="panel-icon">
+            <h2>Icono de cookies</h2>
+          </button>
+          <div class="accordion-panel" id="panel-icon" aria-labelledby="accordion-icon">
+            <label class="inline"><input type="checkbox" name="cookieIconEnabled" checked /> Mostrar icono para reabrir preferencias despues de una decision</label>
+            <div class="conditional" data-when="cookieIconEnabled">
+              <div class="choice-grid choice-grid--wide">
+                <label class="choice"><input type="radio" name="cookieIconPosition" value="bottom-left" checked /> <strong>Inferior izquierda</strong><small>Visible sin competir con acciones comunes del sitio.</small></label>
+                <label class="choice"><input type="radio" name="cookieIconPosition" value="bottom-right" /> <strong>Inferior derecha</strong><small>Familiar para sitios que usan accesos flotantes.</small></label>
+              </div>
+              <label>
+                Esquema de color
+                <select name="cookieIconColorScheme">
+                  <option value="background-on-primary">Fondo sobre primario</option>
+                  <option value="primary-on-background">Primario sobre fondo</option>
+                  <option value="background-on-text">Fondo sobre color de texto</option>
+                  <option value="text-on-background">Texto sobre fondo</option>
+                </select>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <section class="accordion-section" data-accordion-section>
+          <button class="accordion-toggle" type="button" id="accordion-consent" aria-expanded="false" aria-controls="panel-consent">
+            <h2>Tipos de consentimiento</h2>
+          </button>
+          <div class="accordion-panel" id="panel-consent" aria-labelledby="accordion-consent" hidden>
+            <p class="section-note">Define categorias especificas, sus senales para Google Consent Mode y cookies conocidas. Las categorias opcionales quedan desactivadas por defecto.</p>
+            <label>
+              Nombre del evento dataLayer para GTM avanzado
+              <input name="dataLayerEventName" value="cookie_consent_cl_update" />
+            </label>
+            <fieldset class="consent-card">
+              <div class="consent-card__header">
+                <legend>Necesarias</legend>
+                <button class="ghost-button" type="button" disabled>Requerida</button>
+              </div>
+              <label>Etiqueta <input name="necessaryLabel" value="Necesarias" /></label>
+              <label>Descripcion <textarea name="necessaryDescription">Permiten que el sitio funcione correctamente y no se pueden desactivar.</textarea></label>
+              <label class="inline"><input type="checkbox" checked disabled /> Este consentimiento es requerido</label>
+              <h3>Google Consent Mode signals</h3>
+              <p class="section-note">Para cookies necesarias normalmente se mantiene security_storage concedido.</p>
+              <div class="signal-grid" data-signals-for="necessary"></div>
+            </fieldset>
+            <fieldset class="consent-card">
+              <div class="consent-card__header">
+                <legend>Analitica</legend>
+                <button class="ghost-button" type="button" data-disable-category="analytics">Eliminar</button>
+              </div>
+              <label class="inline"><input type="checkbox" name="analyticsEnabled" checked /> Incluir este tipo de consentimiento</label>
+              <div class="conditional" data-when="analyticsEnabled">
+                <label>Etiqueta <input name="analyticsLabel" value="Analitica" /></label>
+                <label>Descripcion <textarea name="analyticsDescription">Nos ayudan a entender como se usa el sitio para mejorar contenidos y servicios.</textarea></label>
+                <h3>Google Consent Mode signals</h3>
+                <p class="section-note">Cuando esta categoria se autoriza, las senales marcadas se actualizan como granted.</p>
+                <div class="signal-grid" data-signals-for="analytics"></div>
+                <h3>Tracking e integraciones</h3>
+                <div class="integration-box">
+                  <strong>Scripts bloqueados por categoria</strong>
+                  <span>Usa este atributo para cargar integraciones solo despues del consentimiento.</span>
+                  <code>&lt;script type="text/plain" data-cookie-consent="analytics" data-src="https://www.googletagmanager.com/gtag/js?id=G-XXXX"&gt;&lt;/script&gt;</code>
+                </div>
+                <label>Cookie conocida <input name="analyticsCookie" value="_ga" /></label>
+              </div>
+            </fieldset>
+            <fieldset class="consent-card">
+              <div class="consent-card__header">
+                <legend>Marketing</legend>
+                <button class="ghost-button" type="button" data-disable-category="marketing">Eliminar</button>
+              </div>
+              <label class="inline"><input type="checkbox" name="marketingEnabled" checked /> Incluir este tipo de consentimiento</label>
+              <div class="conditional" data-when="marketingEnabled">
+                <label>Etiqueta <input name="marketingLabel" value="Marketing" /></label>
+                <label>Descripcion <textarea name="marketingDescription">Permiten medir campanas o mostrar contenido publicitario personalizado.</textarea></label>
+                <h3>Google Consent Mode signals</h3>
+                <p class="section-note">Para Google Ads, normalmente se usan juntas ad_storage, ad_user_data y ad_personalization.</p>
+                <div class="signal-grid" data-signals-for="marketing"></div>
+                <h3>Tracking e integraciones</h3>
+                <div class="integration-box">
+                  <strong>Ejemplo: video o pixel publicitario</strong>
+                  <span>El iframe o script queda sin cargar hasta que la persona acepte marketing.</span>
+                  <code>&lt;iframe data-cookie-consent="marketing" data-src="https://www.youtube.com/embed/XXXX"&gt;&lt;/iframe&gt;</code>
+                </div>
+                <label>Cookie conocida <input name="marketingCookie" value="_fbp" /></label>
+              </div>
+            </fieldset>
+            <fieldset class="consent-card">
+              <div class="consent-card__header">
+                <legend>Preferencias</legend>
+                <button class="ghost-button" type="button" data-disable-category="preferences">Eliminar</button>
+              </div>
+              <label class="inline"><input type="checkbox" name="preferencesEnabled" checked /> Incluir este tipo de consentimiento</label>
+              <div class="conditional" data-when="preferencesEnabled">
+                <label>Etiqueta <input name="preferencesLabel" value="Preferencias" /></label>
+                <label>Descripcion <textarea name="preferencesDescriptionCategory">Permiten recordar elecciones del usuario para mejorar su experiencia.</textarea></label>
+                <h3>Google Consent Mode signals</h3>
+                <p class="section-note">Marca solo las senales que realmente correspondan a esta categoria.</p>
+                <div class="signal-grid" data-signals-for="preferences"></div>
+                <h3>Tracking e integraciones</h3>
+                <div class="integration-box">
+                  <strong>Preferencias del sitio</strong>
+                  <span>Ideal para scripts que recuerdan idioma, region o ajustes de experiencia.</span>
+                </div>
+                <label>Cookie conocida <input name="preferencesCookie" value="cc_preference" /></label>
+              </div>
+            </fieldset>
+          </div>
+        </section>
+
+        <section class="accordion-section" data-accordion-section>
+          <button class="accordion-toggle" type="button" id="accordion-general" aria-expanded="false" aria-controls="panel-general">
+            <h2>Configuracion general</h2>
+          </button>
+          <div class="accordion-panel" id="panel-general" aria-labelledby="accordion-general" hidden>
+            <label>Site ID <input name="siteId" value="mi-sitio-cl" /></label>
+            <label>Version de politica <input name="policyVersion" value="2026-01-01" /></label>
+            <label>URL politica de cookies <input name="cookiePolicyUrl" value="/politica-de-cookies" /></label>
+            <label>URL politica de privacidad <input name="privacyPolicyUrl" value="/politica-de-privacidad" /></label>
+
+            <h3>Texto del banner avanzado</h3>
+            <label>Titulo del banner <input name="bannerTitle" value="Preferencias de cookies" /></label>
+            <label>Descripcion del banner <textarea name="bannerDescription">Usamos cookies necesarias para que este sitio funcione. Con tu autorizacion, tambien podemos usar cookies de analitica, marketing o preferencias para mejorar nuestros servicios.</textarea></label>
+            <div class="grid-3">
+              <label>Boton aceptar <input name="acceptAll" value="Aceptar todas" /></label>
+              <label>Boton rechazar <input name="rejectNonEssential" value="Rechazar no necesarias" /></label>
+              <label>Boton configurar <input name="configure" value="Configurar" /></label>
+            </div>
+            <h3>Etiquetas accesibles del banner</h3>
+            <p class="section-note">Estas etiquetas se anuncian a lectores de pantalla y ayudan a describir mejor cada accion.</p>
+            <div class="grid-3">
+              <label>Aceptar aria-label <input name="acceptAllAriaLabel" value="Aceptar todas las cookies" /></label>
+              <label>Rechazar aria-label <input name="rejectNonEssentialAriaLabel" value="Rechazar todas las cookies no necesarias" /></label>
+              <label>Configurar aria-label <input name="configureAriaLabel" value="Abrir configuracion de cookies" /></label>
+            </div>
+
+            <h3>Texto de preferencias avanzado</h3>
+            <label>Titulo de preferencias <input name="preferencesTitle" value="Configura tus preferencias" /></label>
+            <label>Descripcion de preferencias <textarea name="preferencesDescription">Puedes elegir que categorias de cookies autorizar. Las cookies necesarias se mantienen activas porque permiten el funcionamiento basico del sitio.</textarea></label>
+            <div class="grid-3">
+              <label>Boton guardar <input name="savePreferences" value="Guardar preferencias" /></label>
+              <label>Boton cerrar <input name="close" value="Cerrar" /></label>
+              <label>Boton reabrir <input name="changePreferences" value="Revisar preferencias" /></label>
+            </div>
+            <label>Guardar aria-label <input name="savePreferencesAriaLabel" value="Guardar preferencias de cookies" /></label>
+          </div>
+        </section>
+
+        <section class="accordion-section" data-accordion-section>
+          <button class="accordion-toggle" type="button" id="accordion-install" aria-expanded="false" aria-controls="panel-install">
+            <h2>Instrucciones de instalacion</h2>
+          </button>
+          <div class="accordion-panel" id="panel-install" aria-labelledby="accordion-install" hidden>
+            <div class="install-step">
+              <h3>Paso 1: agrega CSS, JS y configuracion</h3>
+              <p>Incluye este bloque antes de cerrar el <code>&lt;head&gt;</code> o antes de cerrar el <code>&lt;body&gt;</code>. La configuracion refleja lo seleccionado en este asistente.</p>
+              <div class="actions">
+                <button class="tool-button secondary" type="button" id="copy-code">Copiar codigo</button>
+              </div>
+              <pre><code id="install-code"></code></pre>
+            </div>
+            <div class="install-step">
+              <h3>Paso 2: instalacion local para desarrollo</h3>
+              <p>Para probar desde este repositorio, instala dependencias, levanta Vite y abre el configurador o los ejemplos.</p>
+              <pre><code>npm install
+npm run dev</code></pre>
+            </div>
+            <div class="install-step">
+              <h3>Paso 3: scripts bloqueados y Google Consent Mode</h3>
+              <p>Agrega <code>type="text/plain"</code> y <code>data-cookie-consent</code> a integraciones de terceros. Las senales de Google se actualizan segun las categorias que la persona autorice.</p>
+            </div>
+          </div>
+        </section>
+      </form>
+
+      <aside class="preview-pane">
+        <div class="preview-frame-wrap">
+          <iframe id="preview-frame" title="Vista previa cookie-consent-cl" src="./preview.html"></iframe>
+        </div>
+      </aside>
+    </main>
+
+    <script type="module">
+      const form = document.querySelector("#config-form");
+      const code = document.querySelector("#install-code");
+      const contrastResult = document.querySelector("#contrast-result");
+      const previewFrame = document.querySelector("#preview-frame");
+      let previewReady = false;
+
+      const googleSignals = [
+        "ad_storage",
+        "ad_user_data",
+        "ad_personalization",
+        "analytics_storage",
+        "functionality_storage",
+        "personalization_storage",
+        "security_storage"
+      ];
+
+      const defaultSignalsByCategory = {
+        necessary: ["security_storage"],
+        analytics: ["analytics_storage"],
+        marketing: ["ad_storage", "ad_user_data", "ad_personalization"],
+        preferences: ["functionality_storage", "personalization_storage"]
+      };
+
+      const themes = {
+        "bosque-austral": {
+          label: "Bosque austral",
+          description: "Sobrio, publico y cercano.",
+          colors: ["#f8fff8", "#173322", "#0f6b3d"],
+          backgroundColor: "#f8fff8",
+          textColor: "#173322",
+          primaryColor: "#0f6b3d"
+        },
+        "pacifico-claro": {
+          label: "Pacifico claro",
+          description: "Limpio, moderno y tecnico.",
+          colors: ["#ffffff", "#13243a", "#005fcc"],
+          backgroundColor: "#ffffff",
+          textColor: "#13243a",
+          primaryColor: "#005fcc"
+        },
+        "desierto-suave": {
+          label: "Desierto suave",
+          description: "Calido para marcas de servicios.",
+          colors: ["#fffaf1", "#2f261c", "#9a5b13"],
+          backgroundColor: "#fffaf1",
+          textColor: "#2f261c",
+          primaryColor: "#9a5b13"
+        },
+        "noche-civica": {
+          label: "Noche civica",
+          description: "Alto contraste con tono institucional.",
+          colors: ["#111827", "#f9fafb", "#7dd3fc"],
+          backgroundColor: "#111827",
+          textColor: "#f9fafb",
+          primaryColor: "#7dd3fc"
+        }
+      };
+
+      function field(name) {
+        return form.elements[name];
+      }
+
+      function value(name) {
+        return new FormData(form).get(name)?.toString() || "";
+      }
+
+      function checked(name) {
+        return Boolean(field(name)?.checked);
+      }
+
+      function signalName(categoryId, signal) {
+        return `${categoryId}Signal_${signal}`;
+      }
+
+      function renderThemeOptions() {
+        document.querySelector("#theme-options").innerHTML = Object.entries(themes)
+          .map(
+            ([id, theme], index) => `
+              <label class="choice">
+                <input type="radio" name="theme" value="${id}" ${index === 0 ? "checked" : ""}>
+                <strong>${theme.label}</strong>
+                <small>${theme.description}</small>
+                <span class="swatches">
+                  ${theme.colors.map((color) => `<span class="swatch" style="background:${color}"></span>`).join("")}
+                </span>
+              </label>
+            `
+          )
+          .join("");
+      }
+
+      function renderSignalOptions() {
+        document.querySelectorAll("[data-signals-for]").forEach((container) => {
+          const categoryId = container.dataset.signalsFor;
+          const defaults = defaultSignalsByCategory[categoryId] || [];
+          container.innerHTML = googleSignals
+            .map(
+              (signal) => `
+                <label class="inline">
+                  <input type="checkbox" name="${signalName(categoryId, signal)}" ${defaults.includes(signal) ? "checked" : ""}>
+                  ${signal}
+                </label>
+              `
+            )
+            .join("");
+        });
+      }
+
+      function applyTheme() {
+        const theme = themes[value("theme") || "bosque-austral"];
+        field("backgroundColor").value = theme.backgroundColor;
+        field("textColor").value = theme.textColor;
+        field("primaryColor").value = theme.primaryColor;
+      }
+
+      function buildCategories() {
+        const getGoogleSignals = (categoryId) => googleSignals.filter((signal) => checked(signalName(categoryId, signal)));
+        const categories = [
+          {
+            id: "necessary",
+            label: value("necessaryLabel"),
+            description: value("necessaryDescription"),
+            required: true,
+            googleConsentMode: getGoogleSignals("necessary")
+          }
+        ];
+
+        if (checked("analyticsEnabled")) {
+          categories.push({
+            id: "analytics",
+            label: value("analyticsLabel"),
+            description: value("analyticsDescription"),
+            required: false,
+            defaultValue: false,
+            googleConsentMode: getGoogleSignals("analytics")
+          });
+        }
+
+        if (checked("marketingEnabled")) {
+          categories.push({
+            id: "marketing",
+            label: value("marketingLabel"),
+            description: value("marketingDescription"),
+            required: false,
+            defaultValue: false,
+            googleConsentMode: getGoogleSignals("marketing")
+          });
+        }
+
+        if (checked("preferencesEnabled")) {
+          categories.push({
+            id: "preferences",
+            label: value("preferencesLabel"),
+            description: value("preferencesDescriptionCategory"),
+            required: false,
+            defaultValue: false,
+            googleConsentMode: getGoogleSignals("preferences")
+          });
+        }
+
+        return categories;
+      }
+
+      function buildCookies() {
+        return [
+          ["analytics", "analyticsCookie", "Proveedor de analitica", "Medir uso agregado del sitio."],
+          ["marketing", "marketingCookie", "Proveedor de marketing", "Medir campanas o personalizar publicidad."],
+          ["preferences", "preferencesCookie", "Sitio web", "Recordar preferencias de experiencia."]
+        ]
+          .filter(([category, input]) => checked(`${category}Enabled`) && value(input))
+          .map(([category, input, provider, purpose]) => ({
+            name: value(input),
+            provider,
+            category,
+            duration: "Segun proveedor",
+            purpose
+          }));
+      }
+
+      function buildConfig() {
+        return {
+          siteId: `${value("siteId")}-preview`,
+          language: "es-CL",
+          policyVersion: value("policyVersion"),
+          bannerVersion: "1.0.0",
+          cookiePolicyUrl: value("cookiePolicyUrl"),
+          privacyPolicyUrl: value("privacyPolicyUrl"),
+          ethicalMode: true,
+          position: value("position"),
+          theme: {
+            primaryColor: value("primaryColor"),
+            backgroundColor: value("backgroundColor"),
+            textColor: value("textColor")
+          },
+          background: {
+            enabled: true,
+            opacity: 0.45,
+            blur: 0
+          },
+          cookieIcon: {
+            enabled: checked("cookieIconEnabled"),
+            position: value("cookieIconPosition"),
+            colorScheme: value("cookieIconColorScheme")
+          },
+          dataLayerEventName: value("dataLayerEventName"),
+          categories: buildCategories(),
+          cookies: buildCookies(),
+          text: {
+            bannerTitle: value("bannerTitle"),
+            bannerDescription: value("bannerDescription"),
+            acceptAll: value("acceptAll"),
+            acceptAllAriaLabel: value("acceptAllAriaLabel"),
+            rejectNonEssential: value("rejectNonEssential"),
+            rejectNonEssentialAriaLabel: value("rejectNonEssentialAriaLabel"),
+            configure: value("configure"),
+            configureAriaLabel: value("configureAriaLabel"),
+            savePreferences: value("savePreferences"),
+            savePreferencesAriaLabel: value("savePreferencesAriaLabel"),
+            close: value("close"),
+            preferencesTitle: value("preferencesTitle"),
+            preferencesDescription: value("preferencesDescription"),
+            changePreferences: value("changePreferences")
+          }
+        };
+      }
+
+      function installConfig() {
+        const config = buildConfig();
+        return { ...config, siteId: value("siteId") };
+      }
+
+      function renderCode() {
+        code.textContent = `<link rel="stylesheet" href="/dist/cookie-consent-cl.css" />
+<script src="/dist/cookie-consent-cl.iife.js"><\\/script>
+<script>
+  window.CookieConsentCL.init(${JSON.stringify(installConfig(), null, 2)});
+<\\/script>`;
+      }
+
+      function hexToRgb(hex) {
+        const normalized = hex.replace("#", "");
+        return {
+          r: parseInt(normalized.slice(0, 2), 16),
+          g: parseInt(normalized.slice(2, 4), 16),
+          b: parseInt(normalized.slice(4, 6), 16)
+        };
+      }
+
+      function luminance({ r, g, b }) {
+        return [r, g, b]
+          .map((raw) => {
+            const channel = raw / 255;
+            return channel <= 0.03928 ? channel / 12.92 : Math.pow((channel + 0.055) / 1.055, 2.4);
+          })
+          .reduce((sum, channel, index) => sum + channel * [0.2126, 0.7152, 0.0722][index], 0);
+      }
+
+      function contrastRatio(a, b) {
+        const light = Math.max(luminance(hexToRgb(a)), luminance(hexToRgb(b)));
+        const dark = Math.min(luminance(hexToRgb(a)), luminance(hexToRgb(b)));
+        return (light + 0.05) / (dark + 0.05);
+      }
+
+      function updateConditionalSections() {
+        document.querySelectorAll("[data-when]").forEach((section) => {
+          section.hidden = !checked(section.dataset.when);
+        });
+      }
+
+      function setupAccordions() {
+        document.querySelectorAll(".accordion-toggle").forEach((button) => {
+          button.addEventListener("click", () => {
+            const panel = document.getElementById(button.getAttribute("aria-controls"));
+            const expanded = button.getAttribute("aria-expanded") === "true";
+            button.setAttribute("aria-expanded", String(!expanded));
+            panel.hidden = expanded;
+          });
+        });
+      }
+
+      function setupCategoryActions() {
+        document.querySelectorAll("[data-disable-category]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const checkbox = field(`${button.dataset.disableCategory}Enabled`);
+            if (checkbox) checkbox.checked = false;
+            updatePreview();
+          });
+        });
+      }
+
+      function updateContrast() {
+        const textContrast = contrastRatio(value("backgroundColor"), value("textColor"));
+        const primaryContrast = contrastRatio(value("backgroundColor"), value("primaryColor"));
+        const passes = textContrast >= 4.5 && primaryContrast >= 3;
+        contrastResult.classList.toggle("warn", !passes);
+        contrastResult.textContent = passes
+          ? "Contraste suficiente."
+          : "Advertencia de accesibilidad: revisa el contraste entre fondo, texto o color primario.";
+      }
+
+      function updateGeneratedOnly() {
+        updateConditionalSections();
+        updateContrast();
+        renderCode();
+      }
+
+      function sendPreviewConfig({ restart = false } = {}) {
+        if (!previewReady) return;
+        previewFrame.contentWindow.postMessage({ type: "cccl-preview-config", config: buildConfig(), restart }, "*");
+      }
+
+      function updatePreview() {
+        updateGeneratedOnly();
+        sendPreviewConfig();
+      }
+
+      function restartPreview() {
+        updateGeneratedOnly();
+        sendPreviewConfig({ restart: true });
+      }
+
+      let livePreviewTimer = 0;
+
+      function schedulePreviewUpdate() {
+        window.clearTimeout(livePreviewTimer);
+        livePreviewTimer = window.setTimeout(() => {
+          updatePreview();
+        }, 180);
+      }
+
+      renderThemeOptions();
+      renderSignalOptions();
+      applyTheme();
+      setupAccordions();
+      setupCategoryActions();
+      updateGeneratedOnly();
+
+      window.addEventListener("message", (event) => {
+        if (event.data?.type === "cccl-preview-ready") {
+          previewReady = true;
+          restartPreview();
+        }
+        if (event.data?.type === "cccl-preview-restart") {
+          restartPreview();
+        }
+      });
+
+      form.addEventListener("input", (event) => {
+        if (event.target.name === "theme") applyTheme();
+        updateGeneratedOnly();
+        schedulePreviewUpdate();
+      });
+
+      document.querySelector("#copy-code").addEventListener("click", async () => {
+        await navigator.clipboard.writeText(code.textContent);
+      });
+    </script>
+  </body>
+</html>

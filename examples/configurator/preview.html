@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="es-CL">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../../styles/cookie-consent-cl.css" />
+    <style>
+      :root {
+        background: #f5f7fb;
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 18% 22%, rgba(15, 107, 61, 0.18), transparent 26%),
+          radial-gradient(circle at 82% 20%, rgba(0, 95, 204, 0.16), transparent 24%),
+          radial-gradient(circle at 52% 76%, rgba(154, 91, 19, 0.14), transparent 30%),
+          linear-gradient(135deg, #ffffff, #eef3f8);
+      }
+
+      body.theme-night {
+        background:
+          radial-gradient(circle at 18% 22%, rgba(125, 211, 252, 0.18), transparent 26%),
+          radial-gradient(circle at 82% 20%, rgba(167, 139, 250, 0.18), transparent 24%),
+          radial-gradient(circle at 52% 76%, rgba(45, 212, 191, 0.12), transparent 30%),
+          linear-gradient(135deg, #0f172a, #1e293b);
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 28px;
+        border: 1px solid rgba(82, 96, 112, 0.16);
+        border-radius: 18px;
+        background:
+          linear-gradient(90deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.28)),
+          repeating-linear-gradient(0deg, transparent 0 38px, rgba(82, 96, 112, 0.06) 38px 39px),
+          repeating-linear-gradient(90deg, transparent 0 38px, rgba(82, 96, 112, 0.05) 38px 39px);
+        box-shadow: 0 24px 80px rgba(24, 34, 53, 0.14);
+      }
+
+      body.theme-night::before {
+        border-color: rgba(226, 232, 240, 0.12);
+        background:
+          linear-gradient(90deg, rgba(15, 23, 42, 0.68), rgba(15, 23, 42, 0.32)),
+          repeating-linear-gradient(0deg, transparent 0 38px, rgba(226, 232, 240, 0.06) 38px 39px),
+          repeating-linear-gradient(90deg, transparent 0 38px, rgba(226, 232, 240, 0.05) 38px 39px);
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+      }
+
+      .preview-toolbar {
+        position: fixed;
+        z-index: 2147483600;
+        top: 18px;
+        left: 18px;
+        right: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        pointer-events: none;
+      }
+
+      .preview-control {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        border: 1px solid rgba(24, 34, 53, 0.2);
+        border-radius: 999px;
+        padding: 8px 12px;
+        background: rgba(255, 255, 255, 0.78);
+        color: #172033;
+        font: 700 0.92rem system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        cursor: pointer;
+        pointer-events: auto;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 12px 32px rgba(24, 34, 53, 0.14);
+      }
+
+      body.theme-night .preview-control {
+        border-color: rgba(226, 232, 240, 0.18);
+        background: rgba(15, 23, 42, 0.72);
+        color: #f8fafc;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="preview-toolbar" aria-label="Controles de vista previa">
+      <button class="preview-control" type="button" id="theme-toggle" aria-label="Cambiar modo dia o noche">☀︎</button>
+      <button class="preview-control" type="button" id="restart-preview">Reiniciar</button>
+    </div>
+
+    <script type="module">
+      import { CookieConsentCL } from "../../src/index.ts";
+
+      const themeToggle = document.querySelector("#theme-toggle");
+      let currentConfig = null;
+
+      document.querySelector("#restart-preview").addEventListener("click", () => {
+        CookieConsentCL.resetConsent();
+      });
+
+      themeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("theme-night");
+        themeToggle.textContent = document.body.classList.contains("theme-night") ? "☾" : "☀︎";
+      });
+
+      window.addEventListener("message", (event) => {
+        if (event.data?.type !== "cccl-preview-config") return;
+        currentConfig = event.data.config;
+        CookieConsentCL.init(event.data.config);
+        if (event.data.restart) {
+          CookieConsentCL.resetConsent();
+        }
+      });
+
+      window.parent.postMessage({ type: "cccl-preview-ready" }, "*");
+    </script>
+  </body>
+</html>
