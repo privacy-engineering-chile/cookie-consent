@@ -152,7 +152,7 @@ export class ConsentManager {
     updateGoogleConsent(config, consent);
     activateConsentedAssets(consent);
     dispatchConsentUpdate(consent, config.dataLayerEventName);
-    renderPreferenceNotice(config, () => this.openPreferences());
+    renderPreferenceNotice(config);
     renderCookieIcon(config, () => this.openPreferences());
     this.callbacks.forEach((callback) => callback(consent));
     return consent;

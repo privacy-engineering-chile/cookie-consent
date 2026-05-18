@@ -24,8 +24,8 @@ export function activateConsentedAssets(consent: ConsentRecord, root: ParentNode
       executable.text = script.textContent ?? "";
     }
 
-    script.dataset.cookieConsentActivated = "true";
-    script.after(executable);
+    executable.dataset.cookieConsentActivated = "true";
+    script.replaceWith(executable);
   });
 
   root.querySelectorAll<HTMLIFrameElement>("iframe[data-cookie-consent][data-src]").forEach((iframe) => {

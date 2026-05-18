@@ -7,6 +7,7 @@ const categoryList = document.querySelector("#category-list");
 const integrationCategory = document.querySelector("#integration-category");
 const integrationList = document.querySelector("#integration-list");
 const integrationCode = document.querySelector("#integration-code");
+const integrationError = document.querySelector("#integration-error");
 const installCode = document.querySelector("#install-code");
 const warningList = document.querySelector("#warning-list");
 const previewFrame = document.querySelector("#preview-frame");
@@ -77,7 +78,46 @@ const integrationLabels = {
   meta: "Meta Pixel",
   linkedin: "LinkedIn Insight Tag",
   hubspot: "HubSpot tracking",
-  custom: "Custom script URL"
+  custom: "Script personalizado"
+};
+
+const integrationMeta = {
+  gtm: {
+    label: "Google Tag Manager",
+    placeholder: "GTM-XXXXXXX",
+    defaultCategory: "analytics",
+    requiredLabel: "Container ID"
+  },
+  ga4: {
+    label: "Google Analytics 4",
+    placeholder: "G-XXXXXXXXXX",
+    defaultCategory: "analytics",
+    requiredLabel: "Measurement ID"
+  },
+  meta: {
+    label: "Meta Pixel",
+    placeholder: "1234567890",
+    defaultCategory: "marketing",
+    requiredLabel: "Pixel ID"
+  },
+  linkedin: {
+    label: "LinkedIn Insight Tag",
+    placeholder: "123456",
+    defaultCategory: "marketing",
+    requiredLabel: "Partner ID"
+  },
+  hubspot: {
+    label: "HubSpot tracking",
+    placeholder: "1234567",
+    defaultCategory: "marketing",
+    requiredLabel: "Hub ID"
+  },
+  custom: {
+    label: "Script personalizado",
+    placeholder: "https://example.com/script.js",
+    defaultCategory: "analytics",
+    requiredLabel: "Script URL"
+  }
 };
 
 const state = {
@@ -115,10 +155,7 @@ const state = {
       signals: ["functionality_storage", "personalization_storage"]
     }
   ],
-  integrations: [
-    { id: crypto.randomUUID(), type: "gtm", category: "analytics", value: "GTM-XXXX" },
-    { id: crypto.randomUUID(), type: "hubspot", category: "marketing", value: "12345678" }
-  ]
+  integrations: []
 };
 
 function field(name) {
@@ -227,11 +264,14 @@ function renderCategories() {
 }
 
 function renderIntegrationCategoryOptions() {
+  const previous = integrationCategory.value;
   const options = state.categories
     .filter((category) => !category.required)
     .map((category) => `<option value="${category.id}">${escapeHtml(category.label)}</option>`)
     .join("");
   integrationCategory.innerHTML = options || '<option value="necessary">Necesarias</option>';
+  const values = Array.from(integrationCategory.options).map((option) => option.value);
+  integrationCategory.value = values.includes(previous) ? previous : values[0] || "analytics";
 }
 
 function renderIntegrations() {
@@ -249,8 +289,19 @@ function renderIntegrations() {
           `
         )
         .join("")
-    : '<p class="helper">Aun no agregas integraciones guiadas.</p>';
+    : '<p class="helper">Aun no agregas integraciones. Puedes generar snippets para GTM, GA4, Meta Pixel, LinkedIn, HubSpot o un script personalizado.</p>';
   integrationCode.textContent = buildIntegrationSnippets();
+}
+
+function syncIntegrationFields() {
+  const type = document.querySelector("#integration-type").value;
+  const meta = integrationMeta[type];
+  const input = document.querySelector("#integration-value");
+  input.placeholder = meta.placeholder;
+  input.setAttribute("aria-label", meta.requiredLabel);
+  if (state.categories.some((category) => category.id === meta.defaultCategory)) {
+    integrationCategory.value = meta.defaultCategory;
+  }
 }
 
 function syncConditionalSections() {
@@ -366,7 +417,7 @@ function buildCookieDeclarations() {
 
 function buildIntegrationSnippets() {
   if (!state.integrations.length) {
-    return "// Agrega una integracion para generar snippets de carga condicionada.";
+    return "<!-- Agrega una integracion para generar snippets de carga condicionada. -->";
   }
   return state.integrations.map(integrationSnippet).join("\n\n");
 }
@@ -375,26 +426,51 @@ function integrationSnippet(integration) {
   const category = integration.category;
   const raw = integration.value.trim();
   if (integration.type === "gtm") {
-    return `<script type="text/plain" data-cookie-consent="${category}" data-src="https://www.googletagmanager.com/gtm.js?id=${raw}"></script>`;
+    return `<script
+  type="text/plain"
+  data-cookie-consent="${category}"
+  data-src="https://www.googletagmanager.com/gtm.js?id=${raw}">
+</script>`;
   }
   if (integration.type === "ga4") {
-    return `<script type="text/plain" data-cookie-consent="${category}" data-src="https://www.googletagmanager.com/gtag/js?id=${raw}"></script>`;
+    return `<script
+  type="text/plain"
+  data-cookie-consent="${category}"
+  data-src="https://www.googletagmanager.com/gtag/js?id=${raw}">
+</script>
+<script type="text/plain" data-cookie-consent="${category}">
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "${raw}");
+</script>`;
   }
   if (integration.type === "hubspot") {
-    return `<script type="text/plain" data-cookie-consent="${category}" data-src="https://js.hs-scripts.com/${raw}.js"></script>`;
+    return `<script
+  type="text/plain"
+  data-cookie-consent="${category}"
+  data-src="https://js.hs-scripts.com/${raw}.js">
+</script>`;
   }
   if (integration.type === "linkedin") {
     return `<script type="text/plain" data-cookie-consent="${category}">
+  // LinkedIn Insight Tag placeholder.
+  // Reemplaza este bloque por el snippet oficial en produccion.
   window._linkedin_partner_id = "${raw}";
-  console.log("Inicializa LinkedIn Insight Tag despues del consentimiento");
 </script>`;
   }
   if (integration.type === "meta") {
     return `<script type="text/plain" data-cookie-consent="${category}">
-  console.log("Inicializa Meta Pixel ${raw} despues del consentimiento");
+  // Meta Pixel placeholder.
+  // Reemplaza este bloque por el snippet oficial en produccion.
+  window.metaPixelId = "${raw}";
 </script>`;
   }
-  return `<script type="text/plain" data-cookie-consent="${category}" data-src="${raw}"></script>`;
+  return `<script
+  type="text/plain"
+  data-cookie-consent="${category}"
+  data-src="${raw}">
+</script>`;
 }
 
 function buildInstallCode() {
@@ -424,12 +500,13 @@ CookieConsentCL.init(${config});`;
 <link rel="stylesheet" href="/dist/cookie-consent-cl.css" />
 <script src="/dist/cookie-consent-cl.iife.js"></script>
 ${styleBlock}
+
+<!-- Scripts bloqueados por consentimiento -->
+${snippets}
+
 <script>
   window.CookieConsentCL.init(${config});
-</script>
-
-<!-- Scripts condicionados opcionales -->
-${snippets}`;
+</script>`;
   }
 
   if (activeCodeTab === "gtm") {
@@ -445,12 +522,13 @@ ${snippets}`;
   return `<link rel="stylesheet" href="/dist/cookie-consent-cl.css" />
 <script src="/dist/cookie-consent-cl.iife.js"></script>
 ${styleBlock}
+
+<!-- Scripts bloqueados por consentimiento -->
+${snippets}
+
 <script>
   window.CookieConsentCL.init(${config});
-</script>
-
-<!-- Scripts condicionados opcionales -->
-${snippets}`;
+</script>`;
 }
 
 function hexToRgb(hex) {
@@ -552,6 +630,24 @@ function sendPreview({ restart = false, mode = previewMode } = {}) {
   );
 }
 
+async function copyToClipboard(copyText) {
+  try {
+    await navigator.clipboard.writeText(copyText);
+    return true;
+  } catch {
+    const textarea = document.createElement("textarea");
+    textarea.value = copyText;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.append(textarea);
+    textarea.select();
+    const copied = document.execCommand("copy");
+    textarea.remove();
+    return copied;
+  }
+}
+
 function updateAll({ restart = false } = {}) {
   syncConditionalSections();
   syncRangeLabels();
@@ -602,11 +698,21 @@ function addCategory() {
 }
 
 function addIntegration() {
+  integrationError.textContent = "";
+  const type = document.querySelector("#integration-type").value;
   const raw = document.querySelector("#integration-value").value.trim();
-  if (!raw) return;
+  const meta = integrationMeta[type];
+  if (!raw) {
+    integrationError.textContent = `Ingresa un ${meta.requiredLabel} para agregar ${meta.label}.`;
+    return;
+  }
+  if (type === "custom" && !/^https?:\/\//i.test(raw)) {
+    integrationError.textContent = "La URL del script personalizado debe comenzar con http:// o https://.";
+    return;
+  }
   state.integrations.push({
     id: crypto.randomUUID(),
-    type: document.querySelector("#integration-type").value,
+    type,
     category: integrationCategory.value,
     value: raw
   });
@@ -619,7 +725,15 @@ function setPreviewMode(mode) {
   document.querySelectorAll(".preview-mode").forEach((button) => {
     button.classList.toggle("is-active", button.dataset.previewMode === mode);
   });
-  sendPreview({ mode, restart: mode === "banner" });
+  sendPreview({ mode });
+}
+
+function resetPreview() {
+  previewMode = "banner";
+  document.querySelectorAll(".preview-mode").forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.previewMode === "banner");
+  });
+  sendPreview({ restart: true, mode: "banner" });
 }
 
 function setupEvents() {
@@ -653,11 +767,13 @@ function setupEvents() {
       state.integrations = state.integrations.filter((item) => item.id !== deleteIntegration.dataset.deleteIntegration);
       updateAll();
     }
+
   });
 
   document.querySelector("#add-category").addEventListener("click", addCategory);
   document.querySelector("#add-integration").addEventListener("click", addIntegration);
-  document.querySelector("#restart-preview").addEventListener("click", () => sendPreview({ restart: true, mode: "banner" }));
+  document.querySelector("#integration-type").addEventListener("change", syncIntegrationFields);
+  document.querySelector("#restart-preview").addEventListener("click", resetPreview);
   document.querySelector("#reset-config").addEventListener("click", () => window.location.reload());
 
   document.querySelectorAll(".preview-mode").forEach((button) => {
@@ -674,41 +790,8 @@ function setupEvents() {
 
   document.querySelector("#copy-code").addEventListener("click", async () => {
     const copyText = installCode.textContent;
-    let canUseAsyncClipboard = Boolean(navigator.clipboard?.writeText);
-    if (canUseAsyncClipboard && navigator.permissions?.query) {
-      try {
-        const permission = await navigator.permissions.query({ name: "clipboard-write" });
-        canUseAsyncClipboard = permission.state !== "denied";
-      } catch {
-        canUseAsyncClipboard = true;
-      }
-    }
-
-    try {
-      if (canUseAsyncClipboard) {
-        await navigator.clipboard.writeText(copyText);
-        copyStatus.textContent = "Codigo copiado";
-        window.setTimeout(() => {
-          copyStatus.textContent = "";
-        }, 2200);
-        return;
-      }
-    } catch {
-      canUseAsyncClipboard = false;
-    }
-
-    if (!canUseAsyncClipboard) {
-      const textarea = document.createElement("textarea");
-      textarea.value = copyText;
-      textarea.setAttribute("readonly", "");
-      textarea.style.position = "fixed";
-      textarea.style.opacity = "0";
-      document.body.append(textarea);
-      textarea.select();
-      const copied = document.execCommand("copy");
-      textarea.remove();
-      copyStatus.textContent = copied ? "Codigo copiado" : "Selecciona el bloque para copiar";
-    }
+    const copied = await copyToClipboard(copyText);
+    copyStatus.textContent = copied ? "Codigo copiado" : "Selecciona el bloque para copiar";
     window.setTimeout(() => {
       copyStatus.textContent = "";
     }, 2200);
@@ -719,6 +802,12 @@ function setupEvents() {
       previewReady = true;
       sendPreview({ restart: true, mode: previewMode });
     }
+    if (event.data?.type === "cccl-preview-mode") {
+      previewMode = event.data.mode;
+      document.querySelectorAll(".preview-mode").forEach((button) => {
+        button.classList.toggle("is-active", button.dataset.previewMode === previewMode);
+      });
+    }
   });
 }
 
@@ -727,5 +816,6 @@ renderPositions();
 applyPreset();
 renderCategories();
 renderIntegrations();
+syncIntegrationFields();
 setupEvents();
 updateAll({ restart: true });

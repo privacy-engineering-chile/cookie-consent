@@ -209,6 +209,13 @@
           return;
         }
 
+        if (mode === "saved-toast") {
+          CookieConsentCL.acceptAll();
+          document.querySelector("#cccl-preferences-notice")?.remove();
+          document.querySelector("#cccl-cookie-icon")?.remove();
+          return;
+        }
+
         CookieConsentCL.resetConsent();
       }
 
@@ -217,6 +224,15 @@
         clearCookieUi();
         applyDesign(event.data.design);
         CookieConsentCL.init(event.data.config);
+        CookieConsentCL.onConsentChange(() => {
+          window.parent.postMessage(
+            {
+              type: "cccl-preview-mode",
+              mode: event.data.config.cookieIcon?.enabled ? "icon" : "saved-toast"
+            },
+            "*"
+          );
+        });
         renderMode(event.data.restart ? "banner" : event.data.mode || "banner");
       });
 

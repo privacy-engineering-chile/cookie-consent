@@ -159,7 +159,12 @@
           <summary>Integraciones y scripts</summary>
           <div class="panel__body">
             <p class="helper">
-              Genera ejemplos con type="text/plain" y data-cookie-consent. El configurador no carga servicios externos.
+              Agrega herramientas que puedan crear cookies o activar seguimiento. El generador no las carga aqui: solo
+              prepara snippets bloqueados que se ejecutaran cuando la persona autorice la categoria correspondiente.
+            </p>
+            <p class="helper">
+              Usa type="text/plain" y data-cookie-consent para evitar que scripts de analitica o marketing se ejecuten
+              antes del consentimiento.
             </p>
             <div class="integration-form">
               <label>
@@ -179,10 +184,11 @@
               </label>
               <label>
                 ID o URL
-                <input id="integration-value" placeholder="GTM-XXXX, G-XXXX o https://..." />
+                <input id="integration-value" placeholder="GTM-XXXXXXX" />
               </label>
               <button class="button button--primary" type="button" id="add-integration">Agregar integracion</button>
             </div>
+            <p class="form-error" id="integration-error" role="alert" aria-live="polite"></p>
             <div class="integration-list" id="integration-list"></div>
             <pre class="snippet"><code id="integration-code"></code></pre>
           </div>

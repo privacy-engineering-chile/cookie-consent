@@ -64,7 +64,7 @@ describe("ConsentManager", () => {
     expect(document.querySelector("#cccl-banner")).not.toBeNull();
   });
 
-  it("hides the banner after saving preferences from the modal", () => {
+  it("hides the banner and shows a lightweight toast after saving preferences from the modal", () => {
     const manager = createManager();
 
     manager.openPreferences();
@@ -72,7 +72,8 @@ describe("ConsentManager", () => {
 
     expect(document.querySelector("#cccl-banner")).toBeNull();
     expect(document.querySelector("#cccl-modal-root")).toBeNull();
-    expect(document.querySelector("#cccl-preferences-notice")).not.toBeNull();
+    expect(document.querySelector("#cccl-preferences-notice")?.textContent).toContain("Preferencias de cookies guardadas");
+    expect(document.querySelector("#cccl-preferences-notice button")).toBeNull();
     expect(manager.getConsent()?.status).toBe("custom");
   });
 

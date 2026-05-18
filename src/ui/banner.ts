@@ -66,7 +66,7 @@ export function hideBanner(): void {
   removeElement("#cccl-banner-backdrop");
 }
 
-export function renderPreferenceNotice(config: NormalizedCookieConsentConfig, onOpenPreferences: () => void): void {
+export function renderPreferenceNotice(config: NormalizedCookieConsentConfig): void {
   removeElement("#cccl-preferences-notice");
 
   const notice = document.createElement("section");
@@ -77,24 +77,12 @@ export function renderPreferenceNotice(config: NormalizedCookieConsentConfig, on
   setThemeVariables(notice, config.theme);
 
   notice.innerHTML = `
-    <div>
-      <h2 class="cccl-notice__title">${config.text.preferencesSavedTitle}</h2>
-      <p class="cccl-notice__description">${config.text.preferencesSavedDescription}</p>
-    </div>
-    <div class="cccl-notice__actions">
-      <button type="button" class="cccl-button cccl-button--secondary" data-action="preferences">${config.text.changePreferences}</button>
-      <button type="button" class="cccl-modal__close" data-action="dismiss" aria-label="${config.text.close}">x</button>
-    </div>
+    <span class="cccl-notice__check" aria-hidden="true">✓</span>
+    <span class="cccl-notice__title">${config.text.preferencesSavedTitle}</span>
   `;
 
-  notice.querySelector<HTMLButtonElement>('[data-action="preferences"]')?.addEventListener("click", () => {
-    hidePreferenceNotice();
-    onOpenPreferences();
-  });
-  notice.querySelector<HTMLButtonElement>('[data-action="dismiss"]')?.addEventListener("click", hidePreferenceNotice);
-
   document.body.append(notice);
-  window.setTimeout(() => hidePreferenceNotice(), 9000);
+  window.setTimeout(() => hidePreferenceNotice(), 2500);
 }
 
 export function hidePreferenceNotice(): void {

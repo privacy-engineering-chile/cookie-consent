@@ -23,6 +23,21 @@ describe("activateConsentedAssets", () => {
     activateConsentedAssets(consent({ analytics: true }));
 
     expect(document.querySelectorAll('script[type="text/javascript"]').length).toBe(1);
+    expect(document.querySelector('script[type="text/plain"][data-cookie-consent="analytics"]')).toBeNull();
+  });
+
+  it("activates external scripts with data-src and preserves safe attributes once", () => {
+    document.body.innerHTML =
+      '<script type="text/plain" data-cookie-consent="analytics" data-src="https://example.com/analytics.js" async id="analytics-script"></script>';
+
+    activateConsentedAssets(consent({ analytics: true }));
+    activateConsentedAssets(consent({ analytics: true }));
+
+    const scripts = document.querySelectorAll<HTMLScriptElement>("#analytics-script");
+    expect(scripts.length).toBe(1);
+    expect(scripts[0]?.src).toBe("https://example.com/analytics.js");
+    expect(scripts[0]?.hasAttribute("async")).toBe(true);
+    expect(scripts[0]?.dataset.cookieConsentActivated).toBe("true");
   });
 
   it("does not activate scripts without category consent", () => {

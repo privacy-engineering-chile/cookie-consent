@@ -144,7 +144,7 @@ Las categorias tienen esta forma:
 - No preselecciona categorias opcionales.
 - Muestra aceptar, rechazar y configurar con visibilidad similar.
 - No interpreta cerrar como consentimiento.
-- Despues de una decision muestra un aviso temporal que informa como cambiar preferencias.
+- Despues de una decision muestra un toast temporal y liviano.
 - El sitio debe ofrecer un enlace o boton propio para reabrir preferencias mas adelante usando `CookieConsentCL.openPreferences()`.
 
 ## Categorias de cookies
@@ -225,7 +225,7 @@ Para que la persona pueda cambiar su decision mas adelante, agrega un enlace o b
 <button type="button" onclick="CookieConsentCL.openPreferences()">Cambiar preferencias de cookies</button>
 ```
 
-Despues de guardar una decision, la libreria muestra una notificacion temporal tipo banner con un boton para cambiar preferencias. Luego desaparece para no dejar un elemento flotante permanente.
+Despues de guardar una decision, la libreria muestra un toast temporal con el texto "Preferencias de cookies guardadas". Si el icono de preferencias esta habilitado, queda disponible para reabrir el panel sin mostrar un segundo banner.
 
 ## Eliminacion de cookies declaradas
 
