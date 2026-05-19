@@ -4,7 +4,6 @@ import { removeElement, setThemeVariables } from "../utils/dom";
 export interface PreferencesHandlers {
   onSave: (categories: Record<string, boolean>) => void;
   onRejectNonEssential: () => void;
-  onClose: () => void;
 }
 
 export function renderPreferencesModal(
@@ -41,8 +40,7 @@ export function renderPreferencesModal(
 
   root.innerHTML = `
     <div class="cccl-backdrop"></div>
-    <section class="cccl-modal" role="dialog" aria-modal="true" aria-labelledby="cccl-modal-title">
-      <button type="button" class="cccl-modal__close" data-action="close" aria-label="${config.text.close}">x</button>
+    <section class="cccl-modal" role="dialog" aria-modal="true" aria-labelledby="cccl-modal-title" tabindex="-1">
       <h2 id="cccl-modal-title" class="cccl-title">${config.text.preferencesTitle}</h2>
       <p class="cccl-description">${config.text.preferencesDescription}</p>
       <form class="cccl-form">
@@ -55,7 +53,6 @@ export function renderPreferencesModal(
     </section>
   `;
 
-  root.querySelector<HTMLButtonElement>('[data-action="close"]')?.addEventListener("click", handlers.onClose);
   root
     .querySelector<HTMLButtonElement>('[data-action="reject"]')
     ?.addEventListener("click", handlers.onRejectNonEssential);
@@ -72,7 +69,7 @@ export function renderPreferencesModal(
   });
 
   document.body.append(root);
-  root.querySelector<HTMLButtonElement>('[data-action="close"]')?.focus();
+  root.querySelector<HTMLElement>(".cccl-modal")?.focus();
 }
 
 export function hidePreferencesModal(): void {

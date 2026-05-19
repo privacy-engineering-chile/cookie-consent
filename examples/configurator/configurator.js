@@ -4,14 +4,17 @@ const form = document.querySelector("#config-form");
 const presetGrid = document.querySelector("#preset-grid");
 const positionGrid = document.querySelector("#position-grid");
 const categoryList = document.querySelector("#category-list");
-const integrationCategory = document.querySelector("#integration-category");
 const integrationList = document.querySelector("#integration-list");
 const integrationCode = document.querySelector("#integration-code");
-const integrationError = document.querySelector("#integration-error");
 const installCode = document.querySelector("#install-code");
-const warningList = document.querySelector("#warning-list");
 const previewFrame = document.querySelector("#preview-frame");
 const copyStatus = document.querySelector("#copy-status");
+
+if ("scrollRestoration" in window.history) {
+  window.history.scrollRestoration = "manual";
+}
+document.documentElement.scrollTop = 0;
+document.body.scrollTop = 0;
 
 let previewReady = false;
 let previewMode = "banner";
@@ -30,10 +33,10 @@ const googleSignals = [
 const presets = [
   {
     id: "claro",
-    label: "Claro",
+    label: "Clasico",
     backgroundColor: "#ffffff",
-    textColor: "#111827",
-    primaryColor: "#2563eb"
+    textColor: "#4b494b",
+    primaryColor: "#533be2"
   },
   {
     id: "neutral",
@@ -75,10 +78,18 @@ const positions = [
 const integrationLabels = {
   gtm: "Google Tag Manager",
   ga4: "Google Analytics 4",
+  hotjar: "Hotjar",
+  clarity: "Microsoft Clarity",
   meta: "Meta Pixel",
   linkedin: "LinkedIn Insight Tag",
+  tiktok: "TikTok Pixel",
   hubspot: "HubSpot tracking",
-  custom: "Script personalizado"
+  youtube: "YouTube embed",
+  maps: "Google Maps",
+  calendly: "Calendly",
+  typeform: "Typeform",
+  custom: "Script personalizado",
+  customIframe: "Iframe/embed personalizado"
 };
 
 const integrationMeta = {
@@ -94,6 +105,18 @@ const integrationMeta = {
     defaultCategory: "analytics",
     requiredLabel: "Measurement ID"
   },
+  hotjar: {
+    label: "Hotjar",
+    placeholder: "1234567",
+    defaultCategory: "analytics",
+    requiredLabel: "Site ID"
+  },
+  clarity: {
+    label: "Microsoft Clarity",
+    placeholder: "abcdef1234",
+    defaultCategory: "analytics",
+    requiredLabel: "Project ID"
+  },
   meta: {
     label: "Meta Pixel",
     placeholder: "1234567890",
@@ -106,18 +129,61 @@ const integrationMeta = {
     defaultCategory: "marketing",
     requiredLabel: "Partner ID"
   },
+  tiktok: {
+    label: "TikTok Pixel",
+    placeholder: "CXXXXXXXXXXXX",
+    defaultCategory: "marketing",
+    requiredLabel: "Pixel ID"
+  },
   hubspot: {
     label: "HubSpot tracking",
     placeholder: "1234567",
     defaultCategory: "marketing",
     requiredLabel: "Hub ID"
   },
+  youtube: {
+    label: "YouTube embed",
+    placeholder: "VIDEO_ID",
+    defaultCategory: "preferences",
+    requiredLabel: "Video ID"
+  },
+  maps: {
+    label: "Google Maps",
+    placeholder: "https://www.google.com/maps/embed?...",
+    defaultCategory: "preferences",
+    requiredLabel: "URL embed"
+  },
+  calendly: {
+    label: "Calendly",
+    placeholder: "https://calendly.com/tu-equipo/demo",
+    defaultCategory: "preferences",
+    requiredLabel: "URL Calendly"
+  },
+  typeform: {
+    label: "Typeform",
+    placeholder: "https://form.typeform.com/to/XXXX",
+    defaultCategory: "preferences",
+    requiredLabel: "URL Typeform"
+  },
   custom: {
     label: "Script personalizado",
     placeholder: "https://example.com/script.js",
     defaultCategory: "analytics",
     requiredLabel: "Script URL"
+  },
+  customIframe: {
+    label: "Iframe/embed personalizado",
+    placeholder: "https://example.com/embed",
+    defaultCategory: "preferences",
+    requiredLabel: "URL embed"
   }
+};
+
+const suggestedIntegrations = {
+  necessary: ["custom"],
+  analytics: ["ga4", "gtm", "hotjar", "clarity", "custom"],
+  marketing: ["meta", "linkedin", "tiktok", "hubspot", "gtm", "custom"],
+  preferences: ["youtube", "maps", "calendly", "typeform", "customIframe", "custom"]
 };
 
 const state = {
@@ -187,13 +253,11 @@ function renderPresets() {
   presetGrid.innerHTML = presets
     .map(
       (preset, index) => `
-        <label class="preset-card">
+        <label class="preset-card" style="--preset-bg:${preset.backgroundColor}; --preset-text:${preset.textColor}; --preset-primary:${preset.primaryColor};">
           <input type="radio" name="preset" value="${preset.id}" ${index === 0 ? "checked" : ""}>
-          <strong>${preset.label}</strong>
-          <span class="swatches">
-            <span style="background:${preset.backgroundColor}"></span>
-            <span style="background:${preset.textColor}"></span>
-            <span style="background:${preset.primaryColor}"></span>
+          <span class="preset-card__preview">
+            <strong>${preset.label}</strong>
+            <span class="preset-wave"></span>
           </span>
         </label>
       `
@@ -207,8 +271,8 @@ function renderPositions() {
       (position) => `
         <label class="position-card">
           <input type="radio" name="position" value="${position.id}" ${position.id === "bottom" ? "checked" : ""}>
-          <strong>${position.label}</strong>
           <span class="position-preview ${position.previewClass}"></span>
+          <strong>${position.label}</strong>
         </label>
       `
     )
@@ -221,87 +285,134 @@ function renderCategories() {
       (category) => `
         <article class="category-card" data-category-id="${category.id}">
           <div class="category-card__header">
-            <h3>${escapeHtml(category.label)}</h3>
-            <button class="ghost-small" type="button" data-delete-category="${category.id}" ${category.id === "necessary" ? "disabled" : ""}>
-              ${category.id === "necessary" ? "Requerida" : "Eliminar"}
-            </button>
+            <div>
+              <h3>${escapeHtml(category.label)}</h3>
+              <p>${category.required ? "Esta categoria es necesaria para el funcionamiento basico del sitio y no se puede desactivar." : "Esta categoria se activara solo si la persona la autoriza."}</p>
+            </div>
+            ${
+              category.id === "necessary"
+                ? '<span class="category-badge">Requerida</span>'
+                : `<button class="ghost-small" type="button" data-delete-category="${category.id}" aria-label="Eliminar ${escapeHtml(category.label)}">Eliminar</button>`
+            }
           </div>
           <div class="field-grid field-grid--two">
             <label>Identificador <input data-cat-field="id" value="${escapeHtml(category.id)}" ${category.id === "necessary" ? "disabled" : ""}></label>
             <label>Etiqueta <input data-cat-field="label" value="${escapeHtml(category.label)}"></label>
           </div>
           <label>Descripcion <textarea data-cat-field="description">${escapeHtml(category.description)}</textarea></label>
-          <div class="field-grid field-grid--two">
-            <label class="switch-row">
-              <span><strong>Este consentimiento es requerido</strong></span>
-              <input type="checkbox" data-cat-field="required" ${category.required ? "checked" : ""} ${category.id === "necessary" ? "disabled" : ""}>
-            </label>
-            <label class="switch-row">
-              <span><strong>Activado por defecto</strong></span>
-              <input type="checkbox" data-cat-field="defaultValue" ${category.defaultValue ? "checked" : ""} ${category.required ? "disabled" : ""}>
-            </label>
-          </div>
-          <div>
-            <p class="helper">Google Consent Mode signals</p>
-            <div class="signal-grid">
-              ${googleSignals
-                .map(
-                  (signal) => `
-                    <label>
-                      <input type="checkbox" data-signal="${signal}" ${category.signals.includes(signal) ? "checked" : ""}>
-                      ${signal}
-                    </label>
-                  `
-                )
-                .join("")}
+          <section class="category-section">
+            <div class="category-section__header">
+              <div>
+                <h4>Integraciones</h4>
+                <p>${category.required ? "Evita asociar herramientas de analitica o marketing a Necesarias. Usa esta categoria solo para elementos indispensables." : "Estas herramientas se cargaran solo si la persona autoriza esta categoria."}</p>
+              </div>
             </div>
-          </div>
+            ${renderCategoryIntegrations(category)}
+          </section>
+          <details class="advanced-card">
+            <summary>Avanzado</summary>
+            <div class="advanced-card__body">
+              <p class="helper">Configura senales tecnicas para Google Consent Mode, Google Tag Manager u otras integraciones.</p>
+              <p class="helper">Cuando esta categoria sea autorizada, las senales seleccionadas se enviaran como granted. Si no es autorizada, se mantendran como denied.</p>
+              <div class="signal-grid">
+                ${googleSignals
+                  .map(
+                    (signal) => `
+                      <label>
+                        <input type="checkbox" data-signal="${signal}" ${category.signals.includes(signal) ? "checked" : ""}>
+                        ${signal}
+                      </label>
+                    `
+                  )
+                  .join("")}
+              </div>
+            </div>
+          </details>
         </article>
       `
     )
     .join("");
-  renderIntegrationCategoryOptions();
 }
 
-function renderIntegrationCategoryOptions() {
-  const previous = integrationCategory.value;
-  const options = state.categories
-    .filter((category) => !category.required)
-    .map((category) => `<option value="${category.id}">${escapeHtml(category.label)}</option>`)
-    .join("");
-  integrationCategory.innerHTML = options || '<option value="necessary">Necesarias</option>';
-  const values = Array.from(integrationCategory.options).map((option) => option.value);
-  integrationCategory.value = values.includes(previous) ? previous : values[0] || "analytics";
+function renderCategoryIntegrations(category) {
+  const integrations = state.integrations.filter((integration) => integration.category === category.id);
+  const types = integrationTypesForCategory(category);
+  return `
+    <div class="category-integration-list">
+      ${
+        integrations.length
+          ? integrations
+              .map(
+                (integration) => `
+                  <article class="integration-item integration-item--inline">
+                    <div>
+                      <strong>${integrationLabels[integration.type]}</strong>
+                      <p>${escapeHtml(integration.value)}</p>
+                    </div>
+                    <button class="ghost-small" type="button" data-delete-integration="${integration.id}" aria-label="Eliminar ${integrationLabels[integration.type]}">Eliminar</button>
+                  </article>
+                `
+              )
+              .join("")
+          : '<p class="helper">Aun no hay integraciones asociadas a esta categoria.</p>'
+      }
+    </div>
+    <div class="category-integration-form">
+      <label>
+        Integracion
+        <select data-integration-type>
+          ${types.map((type) => `<option value="${type}">${integrationLabels[type]}</option>`).join("")}
+        </select>
+      </label>
+      <label>
+        ID o URL
+        <input data-integration-value placeholder="${integrationMeta[types[0]].placeholder}" />
+      </label>
+      <button class="button button--primary" type="button" data-add-category-integration="${category.id}">Agregar integracion</button>
+    </div>
+    <p class="form-error" data-integration-error role="alert" aria-live="polite"></p>
+    <pre class="snippet snippet--small"><code>${escapeHtml(buildIntegrationSnippets(category.id))}</code></pre>
+  `;
+}
+
+function integrationTypesForCategory(category) {
+  if (category.id in suggestedIntegrations) return suggestedIntegrations[category.id];
+  if (category.required) return suggestedIntegrations.necessary;
+  return ["custom", "customIframe"];
 }
 
 function renderIntegrations() {
-  integrationList.innerHTML = state.integrations.length
-    ? state.integrations
-        .map(
-          (integration) => `
-            <article class="integration-item">
-              <div>
-                <strong>${integrationLabels[integration.type]}</strong>
-                <p>${escapeHtml(integration.category)} · ${escapeHtml(integration.value)}</p>
-              </div>
-              <button class="ghost-small" type="button" data-delete-integration="${integration.id}">Eliminar</button>
-            </article>
-          `
-        )
-        .join("")
-    : '<p class="helper">Aun no agregas integraciones. Puedes generar snippets para GTM, GA4, Meta Pixel, LinkedIn, HubSpot o un script personalizado.</p>';
-  integrationCode.textContent = buildIntegrationSnippets();
-}
-
-function syncIntegrationFields() {
-  const type = document.querySelector("#integration-type").value;
-  const meta = integrationMeta[type];
-  const input = document.querySelector("#integration-value");
-  input.placeholder = meta.placeholder;
-  input.setAttribute("aria-label", meta.requiredLabel);
-  if (state.categories.some((category) => category.id === meta.defaultCategory)) {
-    integrationCategory.value = meta.defaultCategory;
+  if (!state.integrations.length) {
+    integrationList.innerHTML = '<p class="helper">Agrega integraciones desde cada tipo de consentimiento.</p>';
+    integrationCode.textContent = buildIntegrationSnippets();
+    return;
   }
+
+  integrationList.innerHTML = state.categories
+    .map((category) => {
+      const integrations = state.integrations.filter((integration) => integration.category === category.id);
+      if (!integrations.length) return "";
+      return `
+        <article class="integration-summary-group">
+          <h3>${escapeHtml(category.label)}</h3>
+          ${integrations
+            .map(
+              (integration) => `
+                <div class="integration-item">
+                  <div>
+                    <strong>${integrationLabels[integration.type]}</strong>
+                    <p>${escapeHtml(integration.value)}</p>
+                  </div>
+                  <span class="category-badge">${escapeHtml(category.id)}</span>
+                </div>
+              `
+            )
+            .join("")}
+        </article>
+      `;
+    })
+    .join("");
+  integrationCode.textContent = buildIntegrationSnippets();
 }
 
 function syncConditionalSections() {
@@ -314,6 +425,13 @@ function syncRangeLabels() {
   document.querySelector("#radius-value").textContent = `${value("borderRadius")}px`;
   document.querySelector("#opacity-value").textContent = Number(value("overlayOpacity")).toFixed(2);
   document.querySelector("#blur-value").textContent = `${value("overlayBlur")}px`;
+}
+
+function syncColorLabels() {
+  ["backgroundColor", "textColor", "primaryColor"].forEach((name) => {
+    const output = document.querySelector(`[data-color-value="${name}"]`);
+    if (output) output.textContent = value(name).toUpperCase();
+  });
 }
 
 function applyPreset() {
@@ -358,13 +476,17 @@ function buildConfig() {
       position: value("cookieIconPosition"),
       colorScheme: value("cookieIconColorScheme")
     },
+    animation: {
+      enabled: true,
+      type: "cookie-comet"
+    },
     dataLayerEventName: value("dataLayerEventName") || "cookie_consent_cl_update",
     categories: state.categories.map((category) => ({
       id: category.id,
       label: category.label,
       description: category.description,
       required: category.required,
-      defaultValue: category.required ? true : category.defaultValue,
+      defaultValue: category.required ? true : false,
       googleConsentMode: category.signals
     })),
     cookies: buildCookieDeclarations(),
@@ -372,14 +494,13 @@ function buildConfig() {
       bannerTitle: value("bannerTitle"),
       bannerDescription: value("bannerDescription"),
       acceptAll: value("acceptAll"),
-      acceptAllAriaLabel: value("acceptAllAriaLabel"),
+      acceptAllAriaLabel: "Aceptar todas las cookies",
       rejectNonEssential: value("rejectNonEssential"),
-      rejectNonEssentialAriaLabel: value("rejectNonEssentialAriaLabel"),
+      rejectNonEssentialAriaLabel: "Rechazar todas las cookies no necesarias",
       configure: value("configure"),
-      configureAriaLabel: value("configureAriaLabel"),
+      configureAriaLabel: "Abrir configuracion de cookies",
       savePreferences: value("savePreferences"),
-      savePreferencesAriaLabel: value("savePreferencesAriaLabel"),
-      close: value("close"),
+      savePreferencesAriaLabel: "Guardar preferencias de cookies",
       preferencesTitle: value("preferencesTitle"),
       preferencesDescription: value("preferencesDescription"),
       changePreferences: "Revisar preferencias"
@@ -415,11 +536,26 @@ function buildCookieDeclarations() {
   return cookies.filter((cookie) => categoryIds.has(cookie.category));
 }
 
-function buildIntegrationSnippets() {
-  if (!state.integrations.length) {
+function buildIntegrationSnippets(categoryId = null) {
+  const integrations = categoryId
+    ? state.integrations.filter((integration) => integration.category === categoryId)
+    : state.integrations;
+  if (!integrations.length) {
     return "<!-- Agrega una integracion para generar snippets de carga condicionada. -->";
   }
-  return state.integrations.map(integrationSnippet).join("\n\n");
+
+  if (categoryId) return integrations.map(integrationSnippet).join("\n\n");
+
+  return state.categories
+    .map((category) => {
+      const categoryIntegrations = integrations.filter((integration) => integration.category === category.id);
+      if (!categoryIntegrations.length) return "";
+      return `<!-- ${category.label}: se carga solo si la persona autoriza esta categoria -->\n${categoryIntegrations
+        .map(integrationSnippet)
+        .join("\n\n")}`;
+    })
+    .filter(Boolean)
+    .join("\n\n");
 }
 
 function integrationSnippet(integration) {
@@ -451,6 +587,43 @@ function integrationSnippet(integration) {
   data-cookie-consent="${category}"
   data-src="https://js.hs-scripts.com/${raw}.js">
 </script>`;
+  }
+  if (integration.type === "hotjar") {
+    return `<script type="text/plain" data-cookie-consent="${category}">
+  // Hotjar placeholder.
+  // Reemplaza este bloque por el snippet oficial en produccion.
+  window.hotjarSiteId = "${raw}";
+</script>`;
+  }
+  if (integration.type === "clarity") {
+    return `<script type="text/plain" data-cookie-consent="${category}">
+  // Microsoft Clarity placeholder.
+  // Reemplaza este bloque por el snippet oficial en produccion.
+  window.clarityProjectId = "${raw}";
+</script>`;
+  }
+  if (integration.type === "tiktok") {
+    return `<script type="text/plain" data-cookie-consent="${category}">
+  // TikTok Pixel placeholder.
+  // Reemplaza este bloque por el snippet oficial en produccion.
+  window.tiktokPixelId = "${raw}";
+</script>`;
+  }
+  if (integration.type === "youtube") {
+    return `<iframe
+  data-cookie-consent="${category}"
+  data-src="https://www.youtube.com/embed/${raw}"
+  title="Video"
+  loading="lazy">
+</iframe>`;
+  }
+  if (integration.type === "maps" || integration.type === "calendly" || integration.type === "typeform" || integration.type === "customIframe") {
+    return `<iframe
+  data-cookie-consent="${category}"
+  data-src="${raw}"
+  title="Contenido externo"
+  loading="lazy">
+</iframe>`;
   }
   if (integration.type === "linkedin") {
     return `<script type="text/plain" data-cookie-consent="${category}">
@@ -531,87 +704,6 @@ ${snippets}
 </script>`;
 }
 
-function hexToRgb(hex) {
-  const normalized = hex.replace("#", "");
-  return {
-    r: parseInt(normalized.slice(0, 2), 16),
-    g: parseInt(normalized.slice(2, 4), 16),
-    b: parseInt(normalized.slice(4, 6), 16)
-  };
-}
-
-function luminance({ r, g, b }) {
-  return [r, g, b]
-    .map((raw) => {
-      const channel = raw / 255;
-      return channel <= 0.03928 ? channel / 12.92 : Math.pow((channel + 0.055) / 1.055, 2.4);
-    })
-    .reduce((sum, channel, index) => sum + channel * [0.2126, 0.7152, 0.0722][index], 0);
-}
-
-function contrastRatio(a, b) {
-  const light = Math.max(luminance(hexToRgb(a)), luminance(hexToRgb(b)));
-  const dark = Math.min(luminance(hexToRgb(a)), luminance(hexToRgb(b)));
-  return (light + 0.05) / (dark + 0.05);
-}
-
-function buildWarnings() {
-  const warnings = [];
-  const textContrast = contrastRatio(value("backgroundColor"), value("textColor"));
-  const primaryContrast = contrastRatio(value("backgroundColor"), value("primaryColor"));
-  const optionalDefaults = state.categories.filter((category) => !category.required && category.defaultValue);
-
-  if (textContrast < 4.5 || primaryContrast < 3) {
-    warnings.push({
-      title: "Contraste bajo",
-      body: "Este color puede dificultar la lectura para algunas personas. Prueba con mayor contraste.",
-      type: "danger"
-    });
-  }
-  if (!value("rejectNonEssential").trim()) {
-    warnings.push({
-      title: "Rechazo poco visible",
-      body: "El boton para rechazar cookies no necesarias debe estar disponible y ser claro.",
-      type: "danger"
-    });
-  }
-  if (optionalDefaults.length) {
-    warnings.push({
-      title: "Categorias opcionales activadas por defecto",
-      body: "Analitica, marketing o preferencias deberian partir desactivadas salvo que tengas una razon muy clara.",
-      type: "warning"
-    });
-  }
-  if (!checked("cookieIconEnabled")) {
-    warnings.push({
-      title: "Falta acceso para cambiar preferencias",
-      body: "Activa el icono o agrega un enlace visible para que las personas puedan modificar su decision despues.",
-      type: "warning"
-    });
-  }
-  if (!warnings.length) {
-    warnings.push({
-      title: "Buenas practicas activas",
-      body: "La configuracion mantiene rechazo visible, categorias opcionales desactivadas y acceso para revisar preferencias.",
-      type: "success"
-    });
-  }
-  return warnings;
-}
-
-function renderWarnings() {
-  warningList.innerHTML = buildWarnings()
-    .map(
-      (warning) => `
-        <article class="warning-card ${warning.type === "danger" ? "is-danger" : ""} ${warning.type === "success" ? "is-success" : ""}">
-          <strong>${warning.title}</strong>
-          <p>${warning.body}</p>
-        </article>
-      `
-    )
-    .join("");
-}
-
 function renderCode() {
   installCode.textContent = buildInstallCode();
 }
@@ -628,6 +720,13 @@ function sendPreview({ restart = false, mode = previewMode } = {}) {
     },
     "*"
   );
+}
+
+function schedulePreviewSync({ restart = false, attempts = 4 } = {}) {
+  previewReady = true;
+  Array.from({ length: attempts }).forEach((_, index) => {
+    window.setTimeout(() => sendPreview({ restart: index === 0 ? restart : false, mode: previewMode }), 150 + index * 300);
+  });
 }
 
 async function copyToClipboard(copyText) {
@@ -651,8 +750,8 @@ async function copyToClipboard(copyText) {
 function updateAll({ restart = false } = {}) {
   syncConditionalSections();
   syncRangeLabels();
+  syncColorLabels();
   renderIntegrations();
-  renderWarnings();
   renderCode();
   sendPreview({ restart });
 }
@@ -665,12 +764,13 @@ function updateCategoryFromInput(input) {
 
   if (input.dataset.catField) {
     const key = input.dataset.catField;
-    if (key === "required" || key === "defaultValue") {
-      category[key] = input.checked;
-      if (key === "required" && input.checked) category.defaultValue = true;
-    } else if (key === "id") {
+    if (key === "id") {
+      const previousId = category.id;
       category.id = slugify(input.value) || category.id;
       card.dataset.categoryId = category.id;
+      state.integrations = state.integrations.map((integration) =>
+        integration.category === previousId ? { ...integration, category: category.id } : integration
+      );
     } else {
       category[key] = input.value;
     }
@@ -697,31 +797,36 @@ function addCategory() {
   updateAll();
 }
 
-function addIntegration() {
-  integrationError.textContent = "";
-  const type = document.querySelector("#integration-type").value;
-  const raw = document.querySelector("#integration-value").value.trim();
+function addIntegration(categoryCard) {
+  const typeControl = categoryCard.querySelector("[data-integration-type]");
+  const valueControl = categoryCard.querySelector("[data-integration-value]");
+  const error = categoryCard.querySelector("[data-integration-error]");
+  const categoryId = categoryCard.dataset.categoryId;
+  const type = typeControl.value;
+  const raw = valueControl.value.trim();
   const meta = integrationMeta[type];
+  error.textContent = "";
   if (!raw) {
-    integrationError.textContent = `Ingresa un ${meta.requiredLabel} para agregar ${meta.label}.`;
+    error.textContent = `Ingresa un ${meta.requiredLabel} para agregar ${meta.label}.`;
     return;
   }
-  if (type === "custom" && !/^https?:\/\//i.test(raw)) {
-    integrationError.textContent = "La URL del script personalizado debe comenzar con http:// o https://.";
+  if (["custom", "customIframe", "maps", "calendly", "typeform"].includes(type) && !/^https?:\/\//i.test(raw)) {
+    error.textContent = "La URL debe comenzar con http:// o https://.";
     return;
   }
   state.integrations.push({
     id: crypto.randomUUID(),
     type,
-    category: integrationCategory.value,
+    category: categoryId,
     value: raw
   });
-  document.querySelector("#integration-value").value = "";
+  valueControl.value = "";
+  renderCategories();
   updateAll();
 }
 
 function setPreviewMode(mode) {
-  previewMode = mode;
+  previewMode = mode === "transition" ? "icon" : mode;
   document.querySelectorAll(".preview-mode").forEach((button) => {
     button.classList.toggle("is-active", button.dataset.previewMode === mode);
   });
@@ -739,15 +844,14 @@ function resetPreview() {
 function setupEvents() {
   form.addEventListener("input", (event) => {
     if (event.target.name === "preset") applyPreset();
-    if (event.target.closest("[data-category-id]")) {
+    if (event.target.dataset.catField || event.target.dataset.signal) {
       updateCategoryFromInput(event.target);
-      renderIntegrationCategoryOptions();
     }
     updateAll();
   });
 
   form.addEventListener("change", (event) => {
-    if (event.target.closest("[data-category-id]")) {
+    if (event.target.dataset.catField || event.target.dataset.signal) {
       updateCategoryFromInput(event.target);
       renderCategories();
     }
@@ -768,16 +872,26 @@ function setupEvents() {
       updateAll();
     }
 
+    const addCategoryIntegration = event.target.closest("[data-add-category-integration]");
+    if (addCategoryIntegration) {
+      addIntegration(addCategoryIntegration.closest("[data-category-id]"));
+    }
   });
 
   document.querySelector("#add-category").addEventListener("click", addCategory);
-  document.querySelector("#add-integration").addEventListener("click", addIntegration);
-  document.querySelector("#integration-type").addEventListener("change", syncIntegrationFields);
   document.querySelector("#restart-preview").addEventListener("click", resetPreview);
   document.querySelector("#reset-config").addEventListener("click", () => window.location.reload());
 
   document.querySelectorAll(".preview-mode").forEach((button) => {
     button.addEventListener("click", () => setPreviewMode(button.dataset.previewMode));
+  });
+
+  form.addEventListener("change", (event) => {
+    const typeControl = event.target.closest("[data-integration-type]");
+    if (!typeControl) return;
+    const card = typeControl.closest("[data-category-id]");
+    const valueControl = card?.querySelector("[data-integration-value]");
+    if (valueControl) valueControl.placeholder = integrationMeta[typeControl.value].placeholder;
   });
 
   document.querySelectorAll(".code-tab").forEach((button) => {
@@ -809,6 +923,10 @@ function setupEvents() {
       });
     }
   });
+
+  previewFrame.addEventListener("load", () => {
+    schedulePreviewSync({ restart: true });
+  });
 }
 
 renderPresets();
@@ -816,6 +934,6 @@ renderPositions();
 applyPreset();
 renderCategories();
 renderIntegrations();
-syncIntegrationFields();
 setupEvents();
 updateAll({ restart: true });
+schedulePreviewSync({ restart: true });

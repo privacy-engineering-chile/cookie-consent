@@ -11,6 +11,8 @@ describe("normalizeConfig", () => {
 
     expect(config.language).toBe("es-CL");
     expect(config.ethicalMode).toBe(true);
+    expect(config.cookieIcon).toMatchObject({ enabled: true, position: "bottom-right" });
+    expect(config.animation).toMatchObject({ enabled: true, type: "cookie-comet" });
     expect(config.categories.find((category) => category.id === "necessary")?.defaultValue).toBe(true);
     expect(config.categories.find((category) => category.id === "analytics")?.defaultValue).toBe(false);
   });
@@ -44,5 +46,16 @@ describe("normalizeConfig", () => {
       colorScheme: "primary-on-background"
     });
     expect(config.dataLayerEventName).toBe("demo_consent_update");
+  });
+
+  it("accepts icon as an alias for cookieIcon", () => {
+    const config = normalizeConfig({
+      siteId: "demo",
+      policyVersion: "2026-01-01",
+      bannerVersion: "1.0.0",
+      icon: { enabled: true, position: "bottom-left" }
+    });
+
+    expect(config.cookieIcon.position).toBe("bottom-left");
   });
 });

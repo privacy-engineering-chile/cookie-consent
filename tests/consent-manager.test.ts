@@ -51,7 +51,7 @@ describe("ConsentManager", () => {
     expect(consent.categories.marketing).toBe(false);
   });
 
-  it("hides the banner while configuring and restores it when no decision is saved", () => {
+  it("hides the banner while configuring and keeps preferences open until a decision is saved", () => {
     const manager = createManager();
 
     expect(document.querySelector("#cccl-banner")).not.toBeNull();
@@ -59,12 +59,12 @@ describe("ConsentManager", () => {
     manager.openPreferences();
 
     expect(document.querySelector("#cccl-banner")).toBeNull();
-    document.querySelector<HTMLButtonElement>('[data-action="close"]')?.click();
-
-    expect(document.querySelector("#cccl-banner")).not.toBeNull();
+    expect(document.querySelector('[data-action="close"]')).toBeNull();
+    expect(document.querySelector("#cccl-modal-root")).not.toBeNull();
   });
 
   it("hides the banner and shows a lightweight toast after saving preferences from the modal", () => {
+    vi.useFakeTimers();
     const manager = createManager();
 
     manager.openPreferences();
@@ -72,9 +72,15 @@ describe("ConsentManager", () => {
 
     expect(document.querySelector("#cccl-banner")).toBeNull();
     expect(document.querySelector("#cccl-modal-root")).toBeNull();
-    expect(document.querySelector("#cccl-preferences-notice")?.textContent).toContain("Preferencias de cookies guardadas");
+    expect(document.querySelector("#cccl-cookie-comet")).not.toBeNull();
+
+    vi.advanceTimersByTime(700);
+
+    expect(document.querySelector("#cccl-preferences-notice")?.textContent).toContain("Preferencias guardadas");
     expect(document.querySelector("#cccl-preferences-notice button")).toBeNull();
+    expect(document.querySelector("#cccl-cookie-icon")).not.toBeNull();
     expect(manager.getConsent()?.status).toBe("custom");
+    vi.useRealTimers();
   });
 
   it("allows rejecting non-essential cookies from the preferences modal", () => {
@@ -134,6 +140,7 @@ describe("ConsentManager", () => {
   });
 
   it("uses custom dataLayer event names and renders the optional cookie icon", () => {
+    vi.useFakeTimers();
     const manager = new ConsentManager();
     manager.init({
       siteId: "demo-custom-event",
@@ -146,6 +153,22 @@ describe("ConsentManager", () => {
     manager.acceptAll();
 
     expect(window.dataLayer?.[window.dataLayer.length - 1]).toMatchObject({ event: "demo_custom_consent" });
+    vi.advanceTimersByTime(700);
     expect(document.querySelector("#cccl-cookie-icon")).not.toBeNull();
+    vi.useRealTimers();
+  });
+
+  it("allows hiding the persistent cookie icon without resetting consent", () => {
+    vi.useFakeTimers();
+    const manager = createManager();
+
+    manager.acceptAll();
+    vi.advanceTimersByTime(700);
+
+    document.querySelector<HTMLButtonElement>(".cccl-cookie-icon__dismiss")?.click();
+
+    expect(document.querySelector("#cccl-cookie-icon")).toBeNull();
+    expect(manager.getConsent()?.status).toBe("accepted_all");
+    vi.useRealTimers();
   });
 });

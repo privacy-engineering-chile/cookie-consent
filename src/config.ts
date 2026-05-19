@@ -60,6 +60,11 @@ export interface ConsentCookieIcon {
     | "text-on-background";
 }
 
+export interface ConsentAnimation {
+  enabled?: boolean;
+  type?: "cookie-comet";
+}
+
 export interface ConsentText {
   bannerTitle?: string;
   bannerDescription?: string;
@@ -90,7 +95,9 @@ export interface CookieConsentConfig {
   position?: "center" | "bottom" | "top" | "bottom-left" | "bottom-right";
   theme?: ConsentTheme;
   background?: ConsentBackground;
+  icon?: ConsentCookieIcon;
   cookieIcon?: ConsentCookieIcon;
+  animation?: ConsentAnimation;
   dataLayerEventName?: string;
   categories?: CookieCategory[];
   text?: ConsentText;
@@ -99,7 +106,7 @@ export interface CookieConsentConfig {
 }
 
 export type NormalizedCookieConsentConfig = Required<
-  Omit<CookieConsentConfig, "cookiePolicyUrl" | "privacyPolicyUrl" | "onConsentChange">
+  Omit<CookieConsentConfig, "cookiePolicyUrl" | "privacyPolicyUrl" | "onConsentChange" | "icon">
 > & {
   cookiePolicyUrl?: string;
   privacyPolicyUrl?: string;
@@ -157,7 +164,7 @@ export const defaultText: Required<ConsentText> = {
   preferencesTitle: "Configura tus preferencias",
   preferencesDescription:
     "Puedes elegir que categorias de cookies autorizar. Las cookies necesarias se mantienen activas porque permiten el funcionamiento basico del sitio.",
-  preferencesSavedTitle: "Preferencias de cookies guardadas",
+  preferencesSavedTitle: "Preferencias guardadas",
   preferencesSavedDescription:
     "Puedes cambiar tu decision mas adelante desde el enlace o boton de preferencias de cookies del sitio.",
   changePreferences: "Revisar preferencias"
@@ -173,6 +180,7 @@ export function normalizeConfig(config: CookieConsentConfig): NormalizedCookieCo
   }
 
   const ethicalMode = config.ethicalMode ?? true;
+  const iconConfig = config.cookieIcon ?? config.icon;
   const categories = (config.categories?.length ? config.categories : defaultCategories).map((category) => ({
     ...category,
     required: category.required ?? false,
@@ -199,9 +207,13 @@ export function normalizeConfig(config: CookieConsentConfig): NormalizedCookieCo
       blur: config.background?.blur ?? 0
     },
     cookieIcon: {
-      enabled: config.cookieIcon?.enabled ?? false,
-      position: config.cookieIcon?.position ?? "bottom-left",
-      colorScheme: config.cookieIcon?.colorScheme ?? "background-on-primary"
+      enabled: iconConfig?.enabled ?? true,
+      position: iconConfig?.position ?? "bottom-right",
+      colorScheme: iconConfig?.colorScheme ?? "background-on-primary"
+    },
+    animation: {
+      enabled: config.animation?.enabled ?? true,
+      type: config.animation?.type ?? "cookie-comet"
     },
     dataLayerEventName: config.dataLayerEventName ?? "cookie_consent_cl_update",
     categories,

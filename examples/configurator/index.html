@@ -7,75 +7,40 @@
     <link rel="stylesheet" href="./configurator.css" />
   </head>
   <body>
-    <header class="hero" id="inicio">
-      <div class="hero__content">
-        <p class="eyebrow">cookie-consent-cl</p>
-        <h1>Crea tu banner de cookies</h1>
-        <p class="hero__lead">
-          Configura un banner claro, accesible y sin dark patterns para sitios chilenos. Genera el codigo de
-          instalacion en minutos.
-        </p>
-        <div class="badges" aria-label="Caracteristicas del proyecto">
-          <span>Open source</span>
-          <span>Sin backend</span>
-          <span>Pensado para Chile</span>
-          <span>Google Consent Mode v2</span>
-        </div>
-        <div class="hero__actions">
-          <a class="button button--primary" href="#configurador">Configurar banner</a>
-          <a class="button button--secondary" href="#codigo">Ver codigo generado</a>
-        </div>
-      </div>
-      <div class="hero__visual" aria-hidden="true">
-        <div class="browser-card">
-          <div class="browser-card__bar"><span></span><span></span><span></span></div>
-          <div class="browser-card__body">
-            <div class="browser-line browser-line--wide"></div>
-            <div class="browser-grid">
-              <span></span><span></span><span></span>
-            </div>
-            <div class="mini-banner">
-              <strong>Preferencias de cookies</strong>
-              <p>Consentimiento claro, especifico y reversible.</p>
-              <div><span></span><span></span><span></span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <section class="principles" aria-labelledby="principles-title">
-      <div>
-        <p class="eyebrow">Privacidad por diseno</p>
-        <h2 id="principles-title">Pensado para una implementacion clara, no para esconder decisiones</h2>
-      </div>
-      <p>
-        Este generador ayuda a crear una experiencia de consentimiento de cookies clara, especifica y configurable.
-        No reemplaza asesoria legal ni garantiza cumplimiento normativo por si solo, pero promueve buenas practicas
-        tecnicas alineadas con privacidad por diseno.
-      </p>
-      <p class="principles__note">
-        Por defecto, las categorias opcionales vienen desactivadas y el boton de rechazo debe ser tan visible como el
-        de aceptacion.
-      </p>
-    </section>
-
     <main class="workspace" id="configurador">
       <form class="wizard" id="config-form">
         <div class="wizard__header">
           <p class="eyebrow">Generador de banner de cookies</p>
-          <h2>Configura, revisa y copia</h2>
-          <p>Los cambios se reflejan en la vista previa y en el codigo de instalacion.</p>
+          <h1>Configura, revisa y copia</h1>
+          <p>Los cambios se reflejan en la vista previa y en el código de instalación.</p>
         </div>
 
         <details class="panel" open>
           <summary>Apariencia</summary>
           <div class="panel__body">
             <div class="preset-grid" id="preset-grid"></div>
-            <div class="field-grid field-grid--three">
-              <label>Color de fondo <input type="color" name="backgroundColor" /></label>
-              <label>Color de texto <input type="color" name="textColor" /></label>
-              <label>Color primario <input type="color" name="primaryColor" /></label>
+            <div class="color-field-grid">
+              <label class="color-field">
+                <span>Fondo</span>
+                <span class="color-field__control">
+                  <input type="color" name="backgroundColor" />
+                  <strong data-color-value="backgroundColor">#FFFFFF</strong>
+                </span>
+              </label>
+              <label class="color-field">
+                <span>Texto</span>
+                <span class="color-field__control">
+                  <input type="color" name="textColor" />
+                  <strong data-color-value="textColor">#111827</strong>
+                </span>
+              </label>
+              <label class="color-field">
+                <span>Color primario</span>
+                <span class="color-field__control">
+                  <input type="color" name="primaryColor" />
+                  <strong data-color-value="primaryColor">#2563EB</strong>
+                </span>
+              </label>
             </div>
             <label class="range-field">
               <span>Radio de borde <strong id="radius-value">18px</strong></span>
@@ -123,18 +88,41 @@
               <input type="checkbox" name="cookieIconEnabled" checked />
             </label>
             <div class="conditional" data-condition="cookieIconEnabled">
-              <div class="segmented" role="radiogroup" aria-label="Posicion del icono">
-                <label><input type="radio" name="cookieIconPosition" value="bottom-left" checked /> Abajo izquierda</label>
-                <label><input type="radio" name="cookieIconPosition" value="bottom-right" /> Abajo derecha</label>
+              <div>
+                <h3 class="control-heading">Posicion</h3>
+                <div class="icon-position-grid" role="radiogroup" aria-label="Posicion del icono">
+                  <label class="icon-position-card">
+                    <input type="radio" name="cookieIconPosition" value="bottom-left" checked />
+                    <span class="icon-position-preview icon-position-preview--left"><span></span></span>
+                    <strong>Abajo izquierda</strong>
+                  </label>
+                  <label class="icon-position-card">
+                    <input type="radio" name="cookieIconPosition" value="bottom-right" />
+                    <span class="icon-position-preview icon-position-preview--right"><span></span></span>
+                    <strong>Abajo derecha</strong>
+                  </label>
+                </div>
               </div>
-              <label>
-                Estilo del icono
-                <select name="cookieIconColorScheme">
-                  <option value="primary-on-background">Icono primario sobre fondo claro</option>
-                  <option value="background-on-primary">Icono claro sobre primario</option>
-                  <option value="text-on-background">Icono texto sobre fondo</option>
-                </select>
-              </label>
+              <div>
+                <h3 class="control-heading">Estilo del icono</h3>
+                <div class="icon-style-grid" role="radiogroup" aria-label="Estilo del icono">
+                  <label class="icon-style-card">
+                    <input type="radio" name="cookieIconColorScheme" value="primary-on-background" checked />
+                    <span class="cookie-symbol cookie-symbol--primary-on-background"></span>
+                    <strong>Primario sobre fondo</strong>
+                  </label>
+                  <label class="icon-style-card">
+                    <input type="radio" name="cookieIconColorScheme" value="background-on-primary" />
+                    <span class="cookie-symbol cookie-symbol--background-on-primary"></span>
+                    <strong>Fondo sobre primario</strong>
+                  </label>
+                  <label class="icon-style-card">
+                    <input type="radio" name="cookieIconColorScheme" value="text-on-background" />
+                    <span class="cookie-symbol cookie-symbol--text-on-background"></span>
+                    <strong>Texto sobre fondo</strong>
+                  </label>
+                </div>
+              </div>
             </div>
           </div>
         </details>
@@ -143,52 +131,30 @@
           <summary>Tipos de consentimiento</summary>
           <div class="panel__body">
             <p class="helper">
-              Cuando una categoria es autorizada, las senales seleccionadas se enviaran como granted a Google Consent
-              Mode.
+              Define las categorias que vera la persona al configurar sus preferencias. Las categorias opcionales se
+              mantienen desactivadas hasta que sean autorizadas.
             </p>
-            <label>
-              Evento dataLayer para GTM
-              <input name="dataLayerEventName" value="cookie_consent_cl_update" />
-            </label>
             <div class="category-list" id="category-list"></div>
             <button class="button button--secondary button--full" type="button" id="add-category">Agregar categoria</button>
+            <details class="advanced-card">
+              <summary>Avanzado global</summary>
+              <div class="advanced-card__body">
+                <p class="helper">Este evento se enviara a window.dataLayer cuando cambien las preferencias.</p>
+                <label>
+                  Evento dataLayer para GTM
+                  <input name="dataLayerEventName" value="cookie_consent_cl_update" />
+                </label>
+              </div>
+            </details>
           </div>
         </details>
 
         <details class="panel">
-          <summary>Integraciones y scripts</summary>
+          <summary>Integraciones configuradas</summary>
           <div class="panel__body">
             <p class="helper">
-              Agrega herramientas que puedan crear cookies o activar seguimiento. El generador no las carga aqui: solo
-              prepara snippets bloqueados que se ejecutaran cuando la persona autorice la categoria correspondiente.
+              Estas integraciones se cargaran solo cuando la persona autorice la categoria correspondiente.
             </p>
-            <p class="helper">
-              Usa type="text/plain" y data-cookie-consent para evitar que scripts de analitica o marketing se ejecuten
-              antes del consentimiento.
-            </p>
-            <div class="integration-form">
-              <label>
-                Integracion
-                <select id="integration-type">
-                  <option value="gtm">Google Tag Manager</option>
-                  <option value="ga4">Google Analytics 4</option>
-                  <option value="meta">Meta Pixel</option>
-                  <option value="linkedin">LinkedIn Insight Tag</option>
-                  <option value="hubspot">HubSpot tracking</option>
-                  <option value="custom">Custom script URL</option>
-                </select>
-              </label>
-              <label>
-                Categoria
-                <select id="integration-category"></select>
-              </label>
-              <label>
-                ID o URL
-                <input id="integration-value" placeholder="GTM-XXXXXXX" />
-              </label>
-              <button class="button button--primary" type="button" id="add-integration">Agregar integracion</button>
-            </div>
-            <p class="form-error" id="integration-error" role="alert" aria-live="polite"></p>
             <div class="integration-list" id="integration-list"></div>
             <pre class="snippet"><code id="integration-code"></code></pre>
           </div>
@@ -218,23 +184,7 @@
               Descripcion
               <textarea name="preferencesDescription">Puedes elegir que categorias de cookies autorizar. Las cookies necesarias se mantienen activas porque permiten el funcionamiento basico del sitio.</textarea>
             </label>
-            <div class="field-grid field-grid--two">
-              <label>Guardar <input name="savePreferences" value="Guardar preferencias" /></label>
-              <label>Cerrar <input name="close" value="Cerrar" /></label>
-            </div>
-          </div>
-        </details>
-
-        <details class="panel" open>
-          <summary>Accesibilidad</summary>
-          <div class="panel__body">
-            <div class="field-grid field-grid--two">
-              <label>Aceptar aria-label <input name="acceptAllAriaLabel" value="Aceptar todas las cookies" /></label>
-              <label>Rechazar aria-label <input name="rejectNonEssentialAriaLabel" value="Rechazar todas las cookies no necesarias" /></label>
-              <label>Configurar aria-label <input name="configureAriaLabel" value="Abrir configuracion de cookies" /></label>
-              <label>Guardar aria-label <input name="savePreferencesAriaLabel" value="Guardar preferencias de cookies" /></label>
-            </div>
-            <div class="warning-list" id="warning-list"></div>
+            <label>Guardar <input name="savePreferences" value="Guardar preferencias" /></label>
           </div>
         </details>
 
@@ -270,6 +220,7 @@
             <button type="button" class="preview-mode is-active" data-preview-mode="banner">Ver banner</button>
             <button type="button" class="preview-mode" data-preview-mode="preferences">Ver preferencias</button>
             <button type="button" class="preview-mode" data-preview-mode="icon">Ver icono</button>
+            <button type="button" class="preview-mode" data-preview-mode="transition">Probar transicion</button>
           </div>
           <div class="preview-frame-wrap">
             <iframe id="preview-frame" title="Vista previa cookie-consent-cl" src="./preview.html"></iframe>

@@ -17,7 +17,8 @@ import {
   hidePreferenceNotice,
   renderBanner,
   renderCookieIcon,
-  renderPreferenceNotice
+  renderPreferenceNotice,
+  runCookieCometTransition
 } from "./ui/banner";
 import { renderCookieTable } from "./ui/cookie-table";
 import { hidePreferencesModal, renderPreferencesModal } from "./ui/preferences-modal";
@@ -65,13 +66,7 @@ export class ConsentManager {
     hideCookieIcon();
     renderPreferencesModal(config, consent?.categories ?? getDefaultCategoryValues(config), {
       onSave: (categories) => this.updatePreferences(categories),
-      onRejectNonEssential: () => this.rejectNonEssential(),
-      onClose: () => {
-        hidePreferencesModal();
-        if (!this.getConsent()) {
-          this.showBanner();
-        }
-      }
+      onRejectNonEssential: () => this.rejectNonEssential()
     });
   }
 
@@ -146,14 +141,20 @@ export class ConsentManager {
     };
 
     store.set(consent);
-    hideBanner();
-    hidePreferencesModal();
+    const transitionSource =
+      document.querySelector("#cccl-modal-root .cccl-modal") ?? document.querySelector("#cccl-banner");
     deleteCookiesWithoutConsent(config, consent);
     updateGoogleConsent(config, consent);
     activateConsentedAssets(consent);
     dispatchConsentUpdate(consent, config.dataLayerEventName);
-    renderPreferenceNotice(config);
-    renderCookieIcon(config, () => this.openPreferences());
+    if (transitionSource) {
+      runCookieCometTransition(config, () => this.openPreferences(), { source: transitionSource });
+    } else {
+      hideBanner();
+      hidePreferencesModal();
+      renderCookieIcon(config, () => this.openPreferences());
+      renderPreferenceNotice(config);
+    }
     this.callbacks.forEach((callback) => callback(consent));
     return consent;
   }

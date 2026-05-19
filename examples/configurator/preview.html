@@ -168,7 +168,57 @@
     </main>
 
     <script type="module">
-      import { CookieConsentCL } from "../../src/index.ts";
+      import { CookieConsentCL } from "../../dist/cookie-consent-cl.es.js";
+
+      const defaultConfig = {
+        siteId: "preview-site",
+        language: "es-CL",
+        policyVersion: "2026-01-01",
+        bannerVersion: "1.0.0",
+        ethicalMode: true,
+        position: "bottom",
+        theme: {
+          primaryColor: "#533be2",
+          backgroundColor: "#ffffff",
+          textColor: "#4b494b"
+        },
+        cookieIcon: {
+          enabled: true,
+          position: "bottom-left",
+          colorScheme: "primary-on-background"
+        },
+        animation: {
+          enabled: true,
+          type: "cookie-comet"
+        },
+        categories: [
+          {
+            id: "necessary",
+            label: "Necesarias",
+            description: "Permiten que el sitio funcione correctamente y no se pueden desactivar.",
+            required: true
+          },
+          {
+            id: "analytics",
+            label: "Analitica",
+            description: "Nos ayudan a entender como se usa el sitio.",
+            required: false,
+            defaultValue: false
+          }
+        ],
+        text: {
+          bannerTitle: "Preferencias de cookies",
+          bannerDescription:
+            "Usamos cookies necesarias para que este sitio funcione. Con tu autorizacion, tambien podemos usar cookies de analitica, marketing o preferencias.",
+          acceptAll: "Aceptar todas",
+          rejectNonEssential: "Rechazar no necesarias",
+          configure: "Configurar",
+          savePreferences: "Guardar preferencias",
+          close: "Cerrar",
+          preferencesTitle: "Configura tus preferencias",
+          preferencesDescription: "Puedes elegir que categorias de cookies autorizar."
+        }
+      };
 
       function clearCookieUi() {
         [
@@ -176,7 +226,9 @@
           "#cccl-banner-backdrop",
           "#cccl-modal-root",
           "#cccl-preferences-notice",
-          "#cccl-cookie-icon"
+          "#cccl-cookie-icon",
+          "#cccl-cookie-comet",
+          "#cccl-cookie-comet-trail"
         ].forEach((selector) => document.querySelector(selector)?.remove());
       }
 
@@ -209,6 +261,12 @@
           return;
         }
 
+        if (mode === "transition") {
+          CookieConsentCL.resetConsent();
+          requestAnimationFrame(() => CookieConsentCL.acceptAll());
+          return;
+        }
+
         if (mode === "saved-toast") {
           CookieConsentCL.acceptAll();
           document.querySelector("#cccl-preferences-notice")?.remove();
@@ -236,6 +294,9 @@
         renderMode(event.data.restart ? "banner" : event.data.mode || "banner");
       });
 
+      applyDesign({ borderRadius: 18 });
+      CookieConsentCL.init(defaultConfig);
+      renderMode("banner");
       window.parent.postMessage({ type: "cccl-preview-ready" }, "*");
     </script>
   </body>
