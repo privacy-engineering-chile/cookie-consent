@@ -11,8 +11,8 @@
       <form class="wizard" id="config-form">
         <div class="wizard__header">
           <p class="eyebrow">Generador de banner de cookies</p>
-          <h1>Configura, revisa y copia</h1>
-          <p>Los cambios se reflejan en la vista previa y en el código de instalación.</p>
+          <h1>Crea tu banner de cookies</h1>
+          <p>Usa este asistente para configurar un banner claro y copiar el código en minutos.</p>
         </div>
 
         <details class="panel" open>
@@ -49,7 +49,7 @@
           </div>
         </details>
 
-        <details class="panel" open>
+        <details class="panel">
           <summary>Posicion</summary>
           <div class="panel__body">
             <div class="position-grid" id="position-grid"></div>
@@ -82,11 +82,10 @@
         <details class="panel">
           <summary>Icono de cookies</summary>
           <div class="panel__body">
-            <p class="helper">El icono permite que las personas vuelvan a cambiar sus preferencias despues.</p>
-            <label class="switch-row">
-              <span><strong>Mostrar icono despues de una decision</strong></span>
-              <input type="checkbox" name="cookieIconEnabled" checked />
-            </label>
+            <p class="helper icon-helper">
+              El icono aparece despues de cerrar el banner y permite que las personas cambien sus preferencias.
+            </p>
+            <input type="checkbox" name="cookieIconEnabled" checked hidden />
             <div class="conditional" data-condition="cookieIconEnabled">
               <div>
                 <h3 class="control-heading">Posicion</h3>
@@ -121,13 +120,18 @@
                     <span class="cookie-symbol cookie-symbol--text-on-background"></span>
                     <strong>Texto sobre fondo</strong>
                   </label>
+                  <label class="icon-style-card">
+                    <input type="radio" name="cookieIconColorScheme" value="background-on-text" />
+                    <span class="cookie-symbol cookie-symbol--background-on-text"></span>
+                    <strong>Fondo sobre texto</strong>
+                  </label>
                 </div>
               </div>
             </div>
           </div>
         </details>
 
-        <details class="panel" open>
+        <details class="panel">
           <summary>Tipos de consentimiento</summary>
           <div class="panel__body">
             <p class="helper">
@@ -161,13 +165,17 @@
         </details>
 
         <details class="panel">
-          <summary>Textos del banner</summary>
+          <summary>Contenido del banner</summary>
           <div class="panel__body">
-            <label>Titulo del banner <input name="bannerTitle" value="Preferencias de cookies" /></label>
+            <label>Título del banner <input name="bannerTitle" value="Preferencias de cookies" /></label>
             <label>
-              Descripcion del banner
-              <textarea name="bannerDescription">Usamos cookies necesarias para que este sitio funcione. Con tu autorizacion, tambien podemos usar cookies de analitica, marketing o preferencias para mejorar nuestros servicios.</textarea>
+              Descripción del banner
+              <textarea name="bannerDescription">Usamos cookies necesarias para que este sitio funcione. Con tu autorización, también podemos usar cookies de analítica, marketing o preferencias para mejorar nuestros servicios.</textarea>
             </label>
+            <div class="field-grid field-grid--two">
+              <label>URL política de cookies <input name="cookiePolicyUrl" value="/politica-de-cookies" /></label>
+              <label>URL política de privacidad <input name="privacyPolicyUrl" value="/politica-de-privacidad" /></label>
+            </div>
             <div class="field-grid field-grid--three">
               <label>Aceptar <input name="acceptAll" value="Aceptar todas" /></label>
               <label>Rechazar <input name="rejectNonEssential" value="Rechazar no necesarias" /></label>
@@ -190,38 +198,51 @@
 
         <section class="panel" id="codigo" aria-labelledby="codigo-title">
           <div class="panel__title-row">
-            <h2 id="codigo-title">Codigo de instalacion</h2>
-            <button class="button button--ghost" type="button" id="reset-config">Reiniciar configuracion</button>
+            <div>
+              <h2 id="codigo-title">Instrucciones de instalación</h2>
+              <p class="install-note">
+                Sigue estos pasos para instalar el banner en un sitio HTML.
+              </p>
+            </div>
           </div>
-          <div class="code-tabs" role="tablist" aria-label="Tipo de instalacion">
-            <button type="button" class="code-tab is-active" data-code-tab="script">Script tag</button>
-            <button type="button" class="code-tab" data-code-tab="npm">npm / bundler</button>
-            <button type="button" class="code-tab" data-code-tab="wordpress">WordPress / HTML simple</button>
-            <button type="button" class="code-tab" data-code-tab="gtm">Google Tag Manager</button>
+          <div class="install-steps" aria-label="Pasos de instalación">
+            <article class="install-step">
+              <span class="install-step__number">1</span>
+              <div>
+                <h3>Agrega CSS y JS</h3>
+                <p>Usa las URLs versionadas de jsDelivr para cargar <code>cookie-consent-cl.css</code> y <code>cookie-consent-cl.iife.js</code>.</p>
+              </div>
+            </article>
+            <article class="install-step">
+              <span class="install-step__number">2</span>
+              <div>
+                <h3>Pega el HTML</h3>
+                <p>Agrega el bloque generado dentro del <code>&lt;head&gt;</code> de tu página y deja la configuración cerca del cierre de <code>&lt;body&gt;</code> si prefieres separarla.</p>
+              </div>
+            </article>
+            <article class="install-step">
+              <span class="install-step__number">3</span>
+              <div>
+                <h3>Revisa scripts bloqueados</h3>
+                <p>Si agregaste integraciones, conserva los snippets con <code>type="text/plain"</code> y <code>data-cookie-consent</code>.</p>
+              </div>
+            </article>
           </div>
           <div class="code-toolbar">
             <span id="copy-status" aria-live="polite"></span>
-            <button class="button button--primary" type="button" id="copy-code">Copiar codigo</button>
+            <div class="code-toolbar__actions">
+              <button class="button button--ghost" type="button" id="toggle-code" aria-expanded="false" aria-controls="install-code-wrap">Ver código completo</button>
+              <button class="button button--primary" type="button" id="copy-code">Copiar código</button>
+            </div>
           </div>
-          <pre class="code-block"><code id="install-code"></code></pre>
+          <div class="code-block-wrap" id="install-code-wrap">
+            <pre class="code-block"><code id="install-code"></code></pre>
+          </div>
         </section>
       </form>
 
       <aside class="preview-shell" aria-label="Vista previa">
         <div class="preview-card">
-          <div class="preview-card__top">
-            <div>
-              <p class="eyebrow">Preview vivo</p>
-              <h2>Asi se vera en tu sitio</h2>
-            </div>
-            <button class="button button--ghost" type="button" id="restart-preview">Reiniciar preview</button>
-          </div>
-          <div class="preview-controls" role="group" aria-label="Estados del preview">
-            <button type="button" class="preview-mode is-active" data-preview-mode="banner">Ver banner</button>
-            <button type="button" class="preview-mode" data-preview-mode="preferences">Ver preferencias</button>
-            <button type="button" class="preview-mode" data-preview-mode="icon">Ver icono</button>
-            <button type="button" class="preview-mode" data-preview-mode="transition">Probar transicion</button>
-          </div>
           <div class="preview-frame-wrap">
             <iframe id="preview-frame" title="Vista previa cookie-consent-cl" src="./preview.html"></iframe>
           </div>

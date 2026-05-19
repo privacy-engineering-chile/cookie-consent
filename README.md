@@ -37,11 +37,14 @@ La Ley 21.719 refuerza la importancia de tratar datos personales con bases clara
 - No entrega dashboard, cuenta, backend ni log probatorio remoto.
 - No instala Google Analytics, Tag Manager ni servicios de terceros.
 
-## Instalacion con script tag
+## Instalacion con CDN
 
 ```html
-<link rel="stylesheet" href="/dist/cookie-consent-cl.css" />
-<script src="/dist/cookie-consent-cl.iife.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/cookie-consent-cl@0.1.0/dist/cookie-consent-cl.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/cookie-consent-cl@0.1.0/dist/cookie-consent-cl.iife.js"></script>
 <script>
   window.CookieConsentCL.init({
     siteId: "demo-site",
@@ -49,6 +52,17 @@ La Ley 21.719 refuerza la importancia de tratar datos personales con bases clara
     bannerVersion: "1.0.0"
   });
 </script>
+```
+
+Usa una version fija en produccion. No recomendamos depender de `@latest` para sitios reales.
+
+## Instalacion self-host
+
+Tambien puedes descargar el bundle, subirlo a tu propio servidor y usar rutas locales:
+
+```html
+<link rel="stylesheet" href="/dist/cookie-consent-cl.css" />
+<script src="/dist/cookie-consent-cl.iife.js"></script>
 ```
 
 ## Instalacion con npm

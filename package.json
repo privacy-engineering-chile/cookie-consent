@@ -4,9 +4,32 @@
   "description": "Open source cookie consent manager for Chilean websites.",
   "license": "MIT",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/privacy-engineering-chile/cookie-consent.git"
+  },
+  "homepage": "https://github.com/privacy-engineering-chile/cookie-consent#readme",
+  "bugs": {
+    "url": "https://github.com/privacy-engineering-chile/cookie-consent/issues"
+  },
   "main": "dist/cookie-consent-cl.iife.js",
   "module": "dist/cookie-consent-cl.es.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/cookie-consent-cl.es.js",
+      "default": "./dist/cookie-consent-cl.iife.js"
+    },
+    "./dist/cookie-consent-cl.css": "./dist/cookie-consent-cl.css",
+    "./dist/cookie-consent-cl.es.js": "./dist/cookie-consent-cl.es.js",
+    "./dist/cookie-consent-cl.iife.js": "./dist/cookie-consent-cl.iife.js"
+  },
+  "unpkg": "dist/cookie-consent-cl.iife.js",
+  "jsdelivr": "dist/cookie-consent-cl.iife.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "dist",
     "README.md",
@@ -17,6 +40,7 @@
     "build": "vite build && npm run build:types && npm run build:css",
     "build:types": "tsc -p tsconfig.build.json",
     "build:css": "cp styles/cookie-consent-cl.css dist/cookie-consent-cl.css",
+    "prepublishOnly": "npm run lint && npm test && npm run build",
     "test": "vitest run",
     "lint": "eslint .",
     "format": "prettier --write .",

@@ -61,6 +61,37 @@ describe("ConsentManager", () => {
     expect(document.querySelector("#cccl-banner")).toBeNull();
     expect(document.querySelector('[data-action="close"]')).toBeNull();
     expect(document.querySelector("#cccl-modal-root")).not.toBeNull();
+    expect(document.querySelector(".cccl-modal-summary")?.textContent).toContain("Elige que categorias autorizar");
+  });
+
+  it("renders policy links and cookie detail link when declarations exist", () => {
+    const manager = new ConsentManager();
+    manager.init({
+      siteId: "demo-policy-links",
+      policyVersion: "2026-01-01",
+      bannerVersion: "1.0.0",
+      cookiePolicyUrl: "/cookies",
+      privacyPolicyUrl: "/privacidad",
+      cookies: [
+        {
+          name: "_ga",
+          provider: "Google Analytics",
+          category: "analytics",
+          duration: "2 anos",
+          purpose: "Estadisticas"
+        }
+      ]
+    });
+
+    const links = Array.from(document.querySelectorAll<HTMLAnchorElement>(".cccl-links a")).map((link) => ({
+      href: link.getAttribute("href"),
+      text: link.textContent
+    }));
+
+    expect(links).toContainEqual({ href: "/cookies", text: "Politica de cookies" });
+    expect(links).toContainEqual({ href: "/privacidad", text: "Politica de privacidad" });
+    expect(links).toContainEqual({ href: "/cookies#cookie-table", text: "Ver detalle de cookies" });
+    expect(document.querySelector(".cccl-banner__hint")?.textContent).toContain("Puedes cambiar esto despues");
   });
 
   it("hides the banner and shows a lightweight toast after saving preferences from the modal", () => {

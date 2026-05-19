@@ -27,14 +27,14 @@
   right: 16px;
   bottom: 16px;
   display: grid;
-  gap: 16px;
-  max-width: 960px;
+  gap: 12px;
+  max-width: 760px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 16px;
   background: var(--cccl-background-color);
   border: 1px solid var(--cccl-border-color);
-  border-radius: 8px;
-  box-shadow: 0 18px 60px rgba(17, 24, 39, 0.2);
+  border-radius: 10px;
+  box-shadow: 0 18px 52px rgba(17, 24, 39, 0.18);
 }
 
 .cccl-banner-backdrop {
@@ -67,23 +67,31 @@
 }
 
 .cccl-title {
-  margin: 0 0 8px;
-  font-size: 1.1rem;
+  margin: 0 0 6px;
+  font-size: 1rem;
   line-height: 1.3;
   letter-spacing: 0;
 }
 
 .cccl-description,
-.cccl-links {
+.cccl-links,
+.cccl-banner__hint {
   margin: 0;
   color: var(--cccl-muted-color);
-  font-size: 0.95rem;
-  line-height: 1.55;
+  font-size: 0.9rem;
+  line-height: 1.48;
   letter-spacing: 0;
 }
 
 .cccl-links {
-  margin-top: 8px;
+  margin-top: 7px;
+}
+
+.cccl-banner__hint {
+  margin-top: 7px;
+  color: var(--cccl-text-color);
+  font-size: 0.84rem;
+  font-weight: 700;
 }
 
 .cccl-link {
@@ -94,7 +102,7 @@
 .cccl-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
 }
 
 .cccl-actions--modal {
@@ -104,10 +112,10 @@
 
 .cccl-button,
 .cccl-preferences-button {
-  min-height: 42px;
+  min-height: 40px;
   border: 1px solid var(--cccl-primary-color);
   border-radius: 6px;
-  padding: 10px 14px;
+  padding: 9px 13px;
   font-weight: 700;
   font-size: 0.95rem;
   cursor: pointer;
@@ -156,14 +164,31 @@
 
 .cccl-modal {
   position: relative;
-  width: min(680px, calc(100vw - 32px));
+  width: min(560px, calc(100vw - 32px));
   max-height: calc(100vh - 32px);
   overflow: auto;
   margin: 16px auto;
-  padding: 22px;
+  padding: 18px;
   background: var(--cccl-background-color);
-  border-radius: 8px;
+  border-radius: 10px;
   box-shadow: 0 24px 80px rgba(17, 24, 39, 0.28);
+}
+
+.cccl-modal-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 0;
+}
+
+.cccl-modal-summary span {
+  border: 1px solid var(--cccl-border-color);
+  border-radius: 999px;
+  padding: 6px 9px;
+  background: color-mix(in srgb, var(--cccl-primary-color), transparent 94%);
+  color: var(--cccl-text-color);
+  font-size: 0.8rem;
+  font-weight: 750;
 }
 
 .cccl-preferences-notice {
@@ -427,29 +452,34 @@
 
 .cccl-categories {
   display: grid;
-  gap: 12px;
-  margin-top: 18px;
+  gap: 10px;
+  margin-top: 14px;
 }
 
 .cccl-category {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 16px;
+  gap: 12px;
   align-items: center;
-  padding: 14px;
+  padding: 12px;
   border: 1px solid var(--cccl-border-color);
   border-radius: 8px;
 }
 
 .cccl-category__title {
   margin: 0 0 4px;
-  font-size: 1rem;
+  font-size: 0.95rem;
 }
 
 .cccl-category__description {
+  display: -webkit-box;
+  overflow: hidden;
   margin: 0;
   color: var(--cccl-muted-color);
+  font-size: 0.88rem;
   line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .cccl-switch {

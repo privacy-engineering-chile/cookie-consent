@@ -34,6 +34,9 @@ export function renderBanner(config: NormalizedCookieConsentConfig, handlers: Ba
       : "",
     config.privacyPolicyUrl
       ? `<a href="${config.privacyPolicyUrl}" class="cccl-link">Politica de privacidad</a>`
+      : "",
+    config.cookiePolicyUrl && config.cookies.length
+      ? `<a href="${config.cookiePolicyUrl}#cookie-table" class="cccl-link">Ver detalle de cookies</a>`
       : ""
   ]
     .filter(Boolean)
@@ -44,6 +47,7 @@ export function renderBanner(config: NormalizedCookieConsentConfig, handlers: Ba
       <h2 id="cccl-banner-title" class="cccl-title">${config.text.bannerTitle}</h2>
       <p class="cccl-description">${config.text.bannerDescription}</p>
       ${links ? `<p class="cccl-links">${links}</p>` : ""}
+      <p class="cccl-banner__hint">Puedes cambiar esto despues.</p>
     </div>
     <div class="cccl-actions" aria-label="Opciones de consentimiento">
       <button type="button" class="cccl-button cccl-button--choice" data-action="accept" aria-label="${config.text.acceptAllAriaLabel}">${config.text.acceptAll}</button>

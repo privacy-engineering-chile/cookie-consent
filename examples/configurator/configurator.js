@@ -7,8 +7,12 @@ const categoryList = document.querySelector("#category-list");
 const integrationList = document.querySelector("#integration-list");
 const integrationCode = document.querySelector("#integration-code");
 const installCode = document.querySelector("#install-code");
+const installCodeWrap = document.querySelector("#install-code-wrap");
 const previewFrame = document.querySelector("#preview-frame");
 const copyStatus = document.querySelector("#copy-status");
+const toggleCodeButton = document.querySelector("#toggle-code");
+const cdnVersion = "0.1.0";
+const cdnBaseUrl = `https://cdn.jsdelivr.net/npm/cookie-consent-cl@${cdnVersion}/dist`;
 
 if ("scrollRestoration" in window.history) {
   window.history.scrollRestoration = "manual";
@@ -18,7 +22,7 @@ document.body.scrollTop = 0;
 
 let previewReady = false;
 let previewMode = "banner";
-let activeCodeTab = "script";
+let codeExpanded = false;
 
 const googleSignals = [
   "analytics_storage",
@@ -272,7 +276,7 @@ function renderPositions() {
         <label class="position-card">
           <input type="radio" name="position" value="${position.id}" ${position.id === "bottom" ? "checked" : ""}>
           <span class="position-preview ${position.previewClass}"></span>
-          <strong>${position.label}</strong>
+          <span class="position-card__label">${position.label}</span>
         </label>
       `
     )
@@ -452,13 +456,15 @@ function slugify(raw) {
 }
 
 function buildConfig() {
+  const cookiePolicyUrl = value("cookiePolicyUrl").trim();
+  const privacyPolicyUrl = value("privacyPolicyUrl").trim();
   return {
     siteId: "demo-site",
     language: "es-CL",
     policyVersion: "2026-01-01",
     bannerVersion: "1.0.0",
-    cookiePolicyUrl: "/politica-de-cookies",
-    privacyPolicyUrl: "/politica-de-privacidad",
+    ...(cookiePolicyUrl ? { cookiePolicyUrl } : {}),
+    ...(privacyPolicyUrl ? { privacyPolicyUrl } : {}),
     ethicalMode: true,
     position: value("position"),
     theme: {
@@ -659,41 +665,8 @@ function buildInstallCode() {
   }
 </style>`;
 
-  if (activeCodeTab === "npm") {
-    return `npm install cookie-consent-cl
-
-import { CookieConsentCL } from "cookie-consent-cl";
-import "cookie-consent-cl/dist/cookie-consent-cl.css";
-
-CookieConsentCL.init(${config});`;
-  }
-
-  if (activeCodeTab === "wordpress") {
-    return `<!-- Pega esto en el header o footer de tu tema/plugin de snippets. -->
-<link rel="stylesheet" href="/dist/cookie-consent-cl.css" />
-<script src="/dist/cookie-consent-cl.iife.js"></script>
-${styleBlock}
-
-<!-- Scripts bloqueados por consentimiento -->
-${snippets}
-
-<script>
-  window.CookieConsentCL.init(${config});
-</script>`;
-  }
-
-  if (activeCodeTab === "gtm") {
-    return `Notas para Google Tag Manager:
-
-1. Mantén el banner cargado directamente en el sitio, no como tag de marketing.
-2. Usa el evento dataLayer "${buildConfig().dataLayerEventName}" para disparar tags despues del consentimiento.
-3. Para scripts fuera de GTM, usa data-cookie-consent:
-
-${snippets}`;
-  }
-
-  return `<link rel="stylesheet" href="/dist/cookie-consent-cl.css" />
-<script src="/dist/cookie-consent-cl.iife.js"></script>
+  return `<link rel="stylesheet" href="${cdnBaseUrl}/cookie-consent-cl.css" />
+<script src="${cdnBaseUrl}/cookie-consent-cl.iife.js"></script>
 ${styleBlock}
 
 <!-- Scripts bloqueados por consentimiento -->
@@ -706,6 +679,13 @@ ${snippets}
 
 function renderCode() {
   installCode.textContent = buildInstallCode();
+  syncCodeExpansion();
+}
+
+function syncCodeExpansion() {
+  installCodeWrap.classList.toggle("is-expanded", codeExpanded);
+  toggleCodeButton.setAttribute("aria-expanded", String(codeExpanded));
+  toggleCodeButton.textContent = codeExpanded ? "Ocultar código" : "Ver código completo";
 }
 
 function sendPreview({ restart = false, mode = previewMode } = {}) {
@@ -825,19 +805,8 @@ function addIntegration(categoryCard) {
   updateAll();
 }
 
-function setPreviewMode(mode) {
-  previewMode = mode === "transition" ? "icon" : mode;
-  document.querySelectorAll(".preview-mode").forEach((button) => {
-    button.classList.toggle("is-active", button.dataset.previewMode === mode);
-  });
-  sendPreview({ mode });
-}
-
 function resetPreview() {
   previewMode = "banner";
-  document.querySelectorAll(".preview-mode").forEach((button) => {
-    button.classList.toggle("is-active", button.dataset.previewMode === "banner");
-  });
   sendPreview({ restart: true, mode: "banner" });
 }
 
@@ -879,12 +848,6 @@ function setupEvents() {
   });
 
   document.querySelector("#add-category").addEventListener("click", addCategory);
-  document.querySelector("#restart-preview").addEventListener("click", resetPreview);
-  document.querySelector("#reset-config").addEventListener("click", () => window.location.reload());
-
-  document.querySelectorAll(".preview-mode").forEach((button) => {
-    button.addEventListener("click", () => setPreviewMode(button.dataset.previewMode));
-  });
 
   form.addEventListener("change", (event) => {
     const typeControl = event.target.closest("[data-integration-type]");
@@ -892,14 +855,6 @@ function setupEvents() {
     const card = typeControl.closest("[data-category-id]");
     const valueControl = card?.querySelector("[data-integration-value]");
     if (valueControl) valueControl.placeholder = integrationMeta[typeControl.value].placeholder;
-  });
-
-  document.querySelectorAll(".code-tab").forEach((button) => {
-    button.addEventListener("click", () => {
-      activeCodeTab = button.dataset.codeTab;
-      document.querySelectorAll(".code-tab").forEach((tab) => tab.classList.toggle("is-active", tab === button));
-      renderCode();
-    });
   });
 
   document.querySelector("#copy-code").addEventListener("click", async () => {
@@ -911,6 +866,11 @@ function setupEvents() {
     }, 2200);
   });
 
+  toggleCodeButton.addEventListener("click", () => {
+    codeExpanded = !codeExpanded;
+    syncCodeExpansion();
+  });
+
   window.addEventListener("message", (event) => {
     if (event.data?.type === "cccl-preview-ready") {
       previewReady = true;
@@ -918,9 +878,9 @@ function setupEvents() {
     }
     if (event.data?.type === "cccl-preview-mode") {
       previewMode = event.data.mode;
-      document.querySelectorAll(".preview-mode").forEach((button) => {
-        button.classList.toggle("is-active", button.dataset.previewMode === previewMode);
-      });
+    }
+    if (event.data?.type === "cccl-preview-restart") {
+      resetPreview();
     }
   });
 

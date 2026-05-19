@@ -16,24 +16,24 @@
         margin: 0;
         overflow: hidden;
         background:
-          radial-gradient(circle at 16% 10%, rgba(37, 99, 235, 0.18), transparent 22rem),
-          radial-gradient(circle at 88% 18%, rgba(16, 185, 129, 0.16), transparent 19rem),
-          linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+          radial-gradient(circle at 12% 10%, rgba(37, 99, 235, 0.16), transparent 22rem),
+          radial-gradient(circle at 92% 16%, rgba(16, 185, 129, 0.14), transparent 20rem),
+          linear-gradient(135deg, #f8fafc 0%, #edf7ff 54%, #f8fafc 100%);
       }
 
       .site {
         position: relative;
         min-height: 100vh;
-        padding: 24px;
+        padding: 0;
       }
 
       .site-shell {
-        min-height: calc(100vh - 48px);
+        min-height: 100vh;
         overflow: hidden;
-        border: 1px solid rgba(148, 163, 184, 0.28);
-        border-radius: 28px;
-        background: rgba(255, 255, 255, 0.74);
-        box-shadow: 0 30px 90px rgba(15, 23, 42, 0.16);
+        border: 0;
+        border-radius: 0;
+        background: rgba(255, 255, 255, 0.62);
+        box-shadow: none;
         backdrop-filter: blur(18px);
       }
 
@@ -44,6 +44,7 @@
         gap: 18px;
         padding: 18px 20px;
         border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+        background: rgba(255, 255, 255, 0.72);
       }
 
       .brand {
@@ -80,8 +81,8 @@
 
       .site-content {
         display: grid;
-        gap: 22px;
-        padding: 34px 26px 140px;
+        gap: 20px;
+        padding: 34px 26px 160px;
       }
 
       .content-line {
@@ -102,11 +103,63 @@
         gap: 16px;
       }
 
+      .content-hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(180px, 0.9fr);
+        gap: 20px;
+        align-items: stretch;
+        min-height: 180px;
+      }
+
+      .hero-panel,
+      .metric-panel {
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.78);
+        box-shadow: 0 20px 70px rgba(15, 23, 42, 0.09);
+      }
+
+      .hero-panel {
+        display: grid;
+        align-content: center;
+        gap: 16px;
+        padding: 28px;
+      }
+
+      .metric-panel {
+        display: grid;
+        gap: 12px;
+        padding: 22px;
+      }
+
       .content-card {
         min-height: 150px;
         border: 1px solid rgba(148, 163, 184, 0.22);
         border-radius: 20px;
         padding: 18px;
+        background: #ffffff;
+      }
+
+      .preview-restart {
+        position: fixed;
+        z-index: 2147483005;
+        top: 18px;
+        right: 18px;
+        min-height: 38px;
+        border: 1px solid rgba(148, 163, 184, 0.42);
+        border-radius: 999px;
+        padding: 8px 14px;
+        background: rgba(255, 255, 255, 0.88);
+        color: #0f172a;
+        font: inherit;
+        font-size: 0.9rem;
+        font-weight: 850;
+        cursor: pointer;
+        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.14);
+        backdrop-filter: blur(14px);
+      }
+
+      .preview-restart:hover {
         background: #ffffff;
       }
 
@@ -129,13 +182,8 @@
       }
 
       @media (max-width: 700px) {
-        .site {
-          padding: 12px;
-        }
-
         .site-shell {
-          min-height: calc(100vh - 24px);
-          border-radius: 22px;
+          min-height: 100vh;
         }
 
         .nav {
@@ -143,6 +191,10 @@
         }
 
         .content-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .content-hero {
           grid-template-columns: 1fr;
         }
       }
@@ -156,8 +208,19 @@
           <nav class="nav"><span></span><span></span><span></span></nav>
         </header>
         <section class="site-content">
-          <span class="content-line"></span>
-          <span class="content-line"></span>
+          <div class="content-hero">
+            <div class="hero-panel">
+              <span class="content-line"></span>
+              <span class="content-line"></span>
+              <span class="content-line"></span>
+            </div>
+            <div class="metric-panel">
+              <span class="content-line"></span>
+              <span class="content-line"></span>
+              <span class="content-line"></span>
+              <span class="content-line"></span>
+            </div>
+          </div>
           <div class="content-grid">
             <article class="content-card"><span></span><span></span><span></span></article>
             <article class="content-card"><span></span><span></span><span></span></article>
@@ -166,6 +229,7 @@
         </section>
       </div>
     </main>
+    <button class="preview-restart" type="button" id="preview-restart">Reiniciar preview</button>
 
     <script type="module">
       import { CookieConsentCL } from "../../dist/cookie-consent-cl.es.js";
@@ -175,6 +239,8 @@
         language: "es-CL",
         policyVersion: "2026-01-01",
         bannerVersion: "1.0.0",
+        cookiePolicyUrl: "/politica-de-cookies",
+        privacyPolicyUrl: "/politica-de-privacidad",
         ethicalMode: true,
         position: "bottom",
         theme: {
@@ -204,6 +270,15 @@
             description: "Nos ayudan a entender como se usa el sitio.",
             required: false,
             defaultValue: false
+          }
+        ],
+        cookies: [
+          {
+            name: "_ga",
+            provider: "Google Analytics",
+            category: "analytics",
+            duration: "2 anos",
+            purpose: "Distinguir usuarios para generar estadisticas de uso del sitio."
           }
         ],
         text: {
@@ -292,6 +367,10 @@
           );
         });
         renderMode(event.data.restart ? "banner" : event.data.mode || "banner");
+      });
+
+      document.querySelector("#preview-restart").addEventListener("click", () => {
+        window.parent.postMessage({ type: "cccl-preview-restart" }, "*");
       });
 
       applyDesign({ borderRadius: 18 });

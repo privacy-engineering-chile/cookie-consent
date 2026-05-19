@@ -43,6 +43,10 @@ export function renderPreferencesModal(
     <section class="cccl-modal" role="dialog" aria-modal="true" aria-labelledby="cccl-modal-title" tabindex="-1">
       <h2 id="cccl-modal-title" class="cccl-title">${config.text.preferencesTitle}</h2>
       <p class="cccl-description">${config.text.preferencesDescription}</p>
+      <div class="cccl-modal-summary" aria-label="Resumen de preferencias">
+        <span>Elige que categorias autorizar.</span>
+        <span>Las necesarias siempre estan activas.</span>
+      </div>
       <form class="cccl-form">
         <div class="cccl-categories">${categoryMarkup}</div>
         <div class="cccl-actions cccl-actions--modal">
