@@ -201,16 +201,32 @@
             <div>
               <h2 id="codigo-title">Instrucciones de instalación</h2>
               <p class="install-note">
-                Sigue estos pasos para instalar el banner en un sitio HTML.
+                Agrega este HTML a tu sitio. La opcion recomendada usa jsDelivr con una version fija: no uses <code>@latest</code> en produccion.
               </p>
             </div>
+          </div>
+          <div class="install-methods" role="radiogroup" aria-label="Metodo de instalacion">
+            <label class="install-method is-selected">
+              <input type="radio" name="installMethod" value="cdn" checked />
+              <span>
+                <strong>CDN recomendado</strong>
+                <small>Usa npm + jsDelivr con <code>cookie-consent-cl@0.1.0</code>.</small>
+              </span>
+            </label>
+            <label class="install-method">
+              <input type="radio" name="installMethod" value="self-host" />
+              <span>
+                <strong>Self-host</strong>
+                <small>Sube los archivos de <code>dist/</code> a tu servidor.</small>
+              </span>
+            </label>
           </div>
           <div class="install-steps" aria-label="Pasos de instalación">
             <article class="install-step">
               <span class="install-step__number">1</span>
               <div>
-                <h3>Agrega CSS y JS</h3>
-                <p>Usa las URLs versionadas de jsDelivr para cargar <code>cookie-consent-cl.css</code> y <code>cookie-consent-cl.iife.js</code>.</p>
+                <h3 id="install-step-assets-title">Carga CSS y JS</h3>
+                <p id="install-step-assets">Usa las URLs versionadas de jsDelivr para cargar <code>cookie-consent-cl.css</code> y <code>cookie-consent-cl.iife.js</code>.</p>
               </div>
             </article>
             <article class="install-step">

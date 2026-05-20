@@ -895,6 +895,80 @@ input[type="range"] {
   font-size: 0.92rem;
 }
 
+.install-note code {
+  border-radius: 6px;
+  padding: 1px 5px;
+  background: #e2e8f0;
+  color: #0f172a;
+  font-size: 0.84em;
+}
+
+.install-methods {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 16px 20px 0;
+}
+
+.install-method {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+  border: 1px solid var(--cc-border);
+  border-radius: 18px;
+  padding: 12px;
+  cursor: pointer;
+  background: #ffffff;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.install-method:has(input:focus-visible) {
+  outline: 3px solid rgba(37, 99, 235, 0.24);
+  outline-offset: 2px;
+}
+
+.install-method.is-selected,
+.install-method:has(input:checked) {
+  border-color: var(--cc-primary);
+  box-shadow: 0 14px 32px rgba(37, 99, 235, 0.12);
+}
+
+.install-method input {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--cc-primary);
+}
+
+.install-method strong,
+.install-method small {
+  display: block;
+}
+
+.install-method strong {
+  color: var(--cc-text);
+  font-size: 0.95rem;
+}
+
+.install-method small {
+  margin-top: 3px;
+  color: var(--cc-muted);
+  line-height: 1.35;
+}
+
+.install-method code {
+  border-radius: 6px;
+  padding: 1px 5px;
+  background: #e2e8f0;
+  color: #0f172a;
+  font-size: 0.84em;
+}
+
 .install-steps {
   display: grid;
   gap: 10px;
@@ -1093,6 +1167,7 @@ iframe {
   .icon-style-grid,
   .category-integration-form,
   .signal-grid,
+  .install-methods,
   .segmented {
     grid-template-columns: 1fr;
   }

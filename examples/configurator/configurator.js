@@ -11,8 +11,10 @@ const installCodeWrap = document.querySelector("#install-code-wrap");
 const previewFrame = document.querySelector("#preview-frame");
 const copyStatus = document.querySelector("#copy-status");
 const toggleCodeButton = document.querySelector("#toggle-code");
+const installStepAssets = document.querySelector("#install-step-assets");
 const cdnVersion = "0.1.0";
 const cdnBaseUrl = `https://cdn.jsdelivr.net/npm/cookie-consent-cl@${cdnVersion}/dist`;
+const selfHostBaseUrl = "/dist";
 
 if ("scrollRestoration" in window.history) {
   window.history.scrollRestoration = "manual";
@@ -23,6 +25,7 @@ document.body.scrollTop = 0;
 let previewReady = false;
 let previewMode = "banner";
 let codeExpanded = false;
+let installMethod = "cdn";
 
 const googleSignals = [
   "analytics_storage",
@@ -656,6 +659,7 @@ function buildInstallCode() {
   const config = JSON.stringify(buildConfig(), null, 2);
   const radius = value("borderRadius");
   const snippets = buildIntegrationSnippets();
+  const assetBaseUrl = installMethod === "self-host" ? selfHostBaseUrl : cdnBaseUrl;
   const styleBlock = `<style>
   .cccl-banner,
   .cccl-modal,
@@ -665,8 +669,8 @@ function buildInstallCode() {
   }
 </style>`;
 
-  return `<link rel="stylesheet" href="${cdnBaseUrl}/cookie-consent-cl.css" />
-<script src="${cdnBaseUrl}/cookie-consent-cl.iife.js"></script>
+  return `<link rel="stylesheet" href="${assetBaseUrl}/cookie-consent-cl.css" />
+<script src="${assetBaseUrl}/cookie-consent-cl.iife.js"></script>
 ${styleBlock}
 
 <!-- Scripts bloqueados por consentimiento -->
@@ -678,8 +682,23 @@ ${snippets}
 }
 
 function renderCode() {
+  renderInstallMethod();
   installCode.textContent = buildInstallCode();
   syncCodeExpansion();
+}
+
+function renderInstallMethod() {
+  document.querySelectorAll(".install-method").forEach((label) => {
+    const input = label.querySelector("input");
+    label.classList.toggle("is-selected", input?.value === installMethod);
+  });
+
+  if (installStepAssets) {
+    installStepAssets.innerHTML =
+      installMethod === "self-host"
+        ? 'Sube <code>dist/cookie-consent-cl.css</code> y <code>dist/cookie-consent-cl.iife.js</code> a tu servidor, y ajusta las rutas si usas otra carpeta.'
+        : 'Usa las URLs versionadas de jsDelivr para cargar <code>cookie-consent-cl.css</code> y <code>cookie-consent-cl.iife.js</code>.';
+  }
 }
 
 function syncCodeExpansion() {
@@ -820,6 +839,11 @@ function setupEvents() {
   });
 
   form.addEventListener("change", (event) => {
+    if (event.target.name === "installMethod") {
+      installMethod = event.target.value;
+      renderCode();
+      return;
+    }
     if (event.target.dataset.catField || event.target.dataset.signal) {
       updateCategoryFromInput(event.target);
       renderCategories();
