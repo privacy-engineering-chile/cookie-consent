@@ -94,6 +94,43 @@ describe("ConsentManager", () => {
     expect(document.querySelector(".cccl-banner__hint")?.textContent).toContain("Puedes cambiar esto despues");
   });
 
+  it("does not render policy links when urls are not configured", () => {
+    const manager = new ConsentManager();
+    manager.init({
+      siteId: "demo-no-policy-links",
+      policyVersion: "2026-01-01",
+      bannerVersion: "1.0.0",
+      cookies: [
+        {
+          name: "_ga",
+          provider: "Google Analytics",
+          category: "analytics",
+          duration: "2 anos",
+          purpose: "Estadisticas"
+        }
+      ]
+    });
+
+    expect(document.querySelector(".cccl-links")).toBeNull();
+  });
+
+  it("renders only the configured policy link", () => {
+    const manager = new ConsentManager();
+    manager.init({
+      siteId: "demo-one-policy-link",
+      policyVersion: "2026-01-01",
+      bannerVersion: "1.0.0",
+      privacyPolicyUrl: "/privacidad"
+    });
+
+    const links = Array.from(document.querySelectorAll<HTMLAnchorElement>(".cccl-links a")).map((link) => ({
+      href: link.getAttribute("href"),
+      text: link.textContent
+    }));
+
+    expect(links).toEqual([{ href: "/privacidad", text: "Politica de privacidad" }]);
+  });
+
   it("hides the banner and shows a lightweight toast after saving preferences from the modal", () => {
     vi.useFakeTimers();
     const manager = createManager();
@@ -186,6 +223,11 @@ describe("ConsentManager", () => {
     expect(window.dataLayer?.[window.dataLayer.length - 1]).toMatchObject({ event: "demo_custom_consent" });
     vi.advanceTimersByTime(700);
     expect(document.querySelector("#cccl-cookie-icon")).not.toBeNull();
+    expect(document.querySelector(".cccl-cookie-icon__button")?.getAttribute("aria-label")).toBe(
+      "Abrir preferencias de cookies"
+    );
+    expect(document.querySelector(".cccl-cookie-icon__glyph")).not.toBeNull();
+    expect(document.querySelector("#cccl-cookie-icon svg")).toBeNull();
     vi.useRealTimers();
   });
 

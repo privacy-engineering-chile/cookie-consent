@@ -12,6 +12,8 @@ const previewFrame = document.querySelector("#preview-frame");
 const copyStatus = document.querySelector("#copy-status");
 const toggleCodeButton = document.querySelector("#toggle-code");
 const installStepAssets = document.querySelector("#install-step-assets");
+const policyUrlFields = document.querySelector("#policy-url-fields");
+const policyEmptyNote = document.querySelector("#policy-empty-note");
 const cdnVersion = "0.1.0";
 const cdnBaseUrl = `https://cdn.jsdelivr.net/npm/cookie-consent-cl@${cdnVersion}/dist`;
 const selfHostBaseUrl = "/dist";
@@ -40,7 +42,7 @@ const googleSignals = [
 const presets = [
   {
     id: "claro",
-    label: "Clasico",
+    label: "Clásico",
     backgroundColor: "#ffffff",
     textColor: "#4b494b",
     primaryColor: "#533be2"
@@ -54,7 +56,7 @@ const presets = [
   },
   {
     id: "ambar",
-    label: "Ambar",
+    label: "Ámbar",
     backgroundColor: "#fffbeb",
     textColor: "#451a03",
     primaryColor: "#d97706"
@@ -65,13 +67,6 @@ const presets = [
     backgroundColor: "#111827",
     textColor: "#f9fafb",
     primaryColor: "#38bdf8"
-  },
-  {
-    id: "privacy-engineering",
-    label: "Privacy Engineering",
-    backgroundColor: "#f8fafc",
-    textColor: "#172554",
-    primaryColor: "#2563eb"
   }
 ];
 
@@ -426,10 +421,12 @@ function syncConditionalSections() {
   document.querySelectorAll("[data-condition]").forEach((section) => {
     section.hidden = !checked(section.dataset.condition);
   });
+  const hasPolicyLinks = value("policyLinksMode") === "custom";
+  if (policyUrlFields) policyUrlFields.hidden = !hasPolicyLinks;
+  if (policyEmptyNote) policyEmptyNote.hidden = hasPolicyLinks;
 }
 
 function syncRangeLabels() {
-  document.querySelector("#radius-value").textContent = `${value("borderRadius")}px`;
   document.querySelector("#opacity-value").textContent = Number(value("overlayOpacity")).toFixed(2);
   document.querySelector("#blur-value").textContent = `${value("overlayBlur")}px`;
 }
@@ -439,6 +436,9 @@ function syncColorLabels() {
     const output = document.querySelector(`[data-color-value="${name}"]`);
     if (output) output.textContent = value(name).toUpperCase();
   });
+  form.style.setProperty("--cc-preview-bg", value("backgroundColor"));
+  form.style.setProperty("--cc-preview-text", value("textColor"));
+  form.style.setProperty("--cc-preview-primary", value("primaryColor"));
 }
 
 function applyPreset() {
@@ -459,8 +459,9 @@ function slugify(raw) {
 }
 
 function buildConfig() {
-  const cookiePolicyUrl = value("cookiePolicyUrl").trim();
-  const privacyPolicyUrl = value("privacyPolicyUrl").trim();
+  const hasPolicyLinks = value("policyLinksMode") === "custom";
+  const cookiePolicyUrl = hasPolicyLinks ? value("cookiePolicyUrl").trim() : "";
+  const privacyPolicyUrl = hasPolicyLinks ? value("privacyPolicyUrl").trim() : "";
   return {
     siteId: "demo-site",
     language: "es-CL",

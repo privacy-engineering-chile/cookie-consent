@@ -16,7 +16,7 @@
         </div>
 
         <details class="panel" open>
-          <summary>Apariencia</summary>
+          <summary>Colores</summary>
           <div class="panel__body">
             <div class="preset-grid" id="preset-grid"></div>
             <div class="color-field-grid">
@@ -42,10 +42,7 @@
                 </span>
               </label>
             </div>
-            <label class="range-field">
-              <span>Radio de borde <strong id="radius-value">18px</strong></span>
-              <input type="range" name="borderRadius" min="6" max="28" value="18" />
-            </label>
+            <input type="hidden" name="borderRadius" value="18" />
           </div>
         </details>
 
@@ -172,9 +169,25 @@
               Descripción del banner
               <textarea name="bannerDescription">Usamos cookies necesarias para que este sitio funcione. Con tu autorización, también podemos usar cookies de analítica, marketing o preferencias para mejorar nuestros servicios.</textarea>
             </label>
-            <div class="field-grid field-grid--two">
-              <label>URL política de cookies <input name="cookiePolicyUrl" value="/politica-de-cookies" /></label>
-              <label>URL política de privacidad <input name="privacyPolicyUrl" value="/politica-de-privacidad" /></label>
+            <div class="policy-mode">
+              <p class="helper">Si todavía no tienes políticas publicadas, el banner puede mostrarse sin enlaces falsos.</p>
+              <div class="segmented" role="radiogroup" aria-label="Estado de politicas publicadas">
+                <label>
+                  <input type="radio" name="policyLinksMode" value="none" checked />
+                  No tengo políticas todavía
+                </label>
+                <label>
+                  <input type="radio" name="policyLinksMode" value="custom" />
+                  Tengo políticas publicadas
+                </label>
+              </div>
+            </div>
+            <p class="helper policy-empty-note" id="policy-empty-note">
+              Puedes agregar estos enlaces más adelante cuando tengas tus políticas publicadas.
+            </p>
+            <div class="field-grid field-grid--two conditional" id="policy-url-fields" hidden>
+              <label>URL política de cookies <input name="cookiePolicyUrl" value="" placeholder="/politica-de-cookies" /></label>
+              <label>URL política de privacidad <input name="privacyPolicyUrl" value="" placeholder="/politica-de-privacidad" /></label>
             </div>
             <div class="field-grid field-grid--three">
               <label>Aceptar <input name="acceptAll" value="Aceptar todas" /></label>
@@ -196,65 +209,63 @@
           </div>
         </details>
 
-        <section class="panel" id="codigo" aria-labelledby="codigo-title">
-          <div class="panel__title-row">
-            <div>
-              <h2 id="codigo-title">Instrucciones de instalación</h2>
-              <p class="install-note">
-                Agrega este HTML a tu sitio. La opcion recomendada usa jsDelivr con una version fija: no uses <code>@latest</code> en produccion.
-              </p>
+        <details class="panel" id="codigo">
+          <summary id="codigo-title">Instrucciones de instalación</summary>
+          <div class="panel__body">
+            <p class="install-note">
+              Agrega este HTML a tu sitio. La opcion recomendada usa jsDelivr con una version fija: no uses <code>@latest</code> en produccion.
+            </p>
+            <div class="install-methods" role="radiogroup" aria-label="Metodo de instalacion">
+              <label class="install-method is-selected">
+                <input type="radio" name="installMethod" value="cdn" checked />
+                <span>
+                  <strong>CDN recomendado</strong>
+                  <small>Usa npm + jsDelivr con <code>cookie-consent-cl@0.1.0</code>.</small>
+                </span>
+              </label>
+              <label class="install-method">
+                <input type="radio" name="installMethod" value="self-host" />
+                <span>
+                  <strong>Self-host</strong>
+                  <small>Sube los archivos de <code>dist/</code> a tu servidor.</small>
+                </span>
+              </label>
+            </div>
+            <div class="install-steps" aria-label="Pasos de instalación">
+              <article class="install-step">
+                <span class="install-step__number">1</span>
+                <div>
+                  <h3 id="install-step-assets-title">Carga CSS y JS</h3>
+                  <p id="install-step-assets">Usa las URLs versionadas de jsDelivr para cargar <code>cookie-consent-cl.css</code> y <code>cookie-consent-cl.iife.js</code>.</p>
+                </div>
+              </article>
+              <article class="install-step">
+                <span class="install-step__number">2</span>
+                <div>
+                  <h3>Pega el HTML</h3>
+                  <p>Agrega el bloque generado dentro del <code>&lt;head&gt;</code> de tu página y deja la configuración cerca del cierre de <code>&lt;body&gt;</code> si prefieres separarla.</p>
+                </div>
+              </article>
+              <article class="install-step">
+                <span class="install-step__number">3</span>
+                <div>
+                  <h3>Revisa scripts bloqueados</h3>
+                  <p>Si agregaste integraciones, conserva los snippets con <code>type="text/plain"</code> y <code>data-cookie-consent</code>.</p>
+                </div>
+              </article>
+            </div>
+            <div class="code-toolbar">
+              <span id="copy-status" aria-live="polite"></span>
+              <div class="code-toolbar__actions">
+                <button class="button button--ghost" type="button" id="toggle-code" aria-expanded="false" aria-controls="install-code-wrap">Ver código completo</button>
+                <button class="button button--primary" type="button" id="copy-code">Copiar código</button>
+              </div>
+            </div>
+            <div class="code-block-wrap" id="install-code-wrap">
+              <pre class="code-block"><code id="install-code"></code></pre>
             </div>
           </div>
-          <div class="install-methods" role="radiogroup" aria-label="Metodo de instalacion">
-            <label class="install-method is-selected">
-              <input type="radio" name="installMethod" value="cdn" checked />
-              <span>
-                <strong>CDN recomendado</strong>
-                <small>Usa npm + jsDelivr con <code>cookie-consent-cl@0.1.0</code>.</small>
-              </span>
-            </label>
-            <label class="install-method">
-              <input type="radio" name="installMethod" value="self-host" />
-              <span>
-                <strong>Self-host</strong>
-                <small>Sube los archivos de <code>dist/</code> a tu servidor.</small>
-              </span>
-            </label>
-          </div>
-          <div class="install-steps" aria-label="Pasos de instalación">
-            <article class="install-step">
-              <span class="install-step__number">1</span>
-              <div>
-                <h3 id="install-step-assets-title">Carga CSS y JS</h3>
-                <p id="install-step-assets">Usa las URLs versionadas de jsDelivr para cargar <code>cookie-consent-cl.css</code> y <code>cookie-consent-cl.iife.js</code>.</p>
-              </div>
-            </article>
-            <article class="install-step">
-              <span class="install-step__number">2</span>
-              <div>
-                <h3>Pega el HTML</h3>
-                <p>Agrega el bloque generado dentro del <code>&lt;head&gt;</code> de tu página y deja la configuración cerca del cierre de <code>&lt;body&gt;</code> si prefieres separarla.</p>
-              </div>
-            </article>
-            <article class="install-step">
-              <span class="install-step__number">3</span>
-              <div>
-                <h3>Revisa scripts bloqueados</h3>
-                <p>Si agregaste integraciones, conserva los snippets con <code>type="text/plain"</code> y <code>data-cookie-consent</code>.</p>
-              </div>
-            </article>
-          </div>
-          <div class="code-toolbar">
-            <span id="copy-status" aria-live="polite"></span>
-            <div class="code-toolbar__actions">
-              <button class="button button--ghost" type="button" id="toggle-code" aria-expanded="false" aria-controls="install-code-wrap">Ver código completo</button>
-              <button class="button button--primary" type="button" id="copy-code">Copiar código</button>
-            </div>
-          </div>
-          <div class="code-block-wrap" id="install-code-wrap">
-            <pre class="code-block"><code id="install-code"></code></pre>
-          </div>
-        </section>
+        </details>
       </form>
 
       <aside class="preview-shell" aria-label="Vista previa">

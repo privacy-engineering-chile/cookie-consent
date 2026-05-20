@@ -110,7 +110,7 @@ export function renderCookieIcon(
   }
   icon.innerHTML = `
     <button type="button" class="cccl-cookie-icon__button" aria-label="Abrir preferencias de cookies">
-      <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none"><circle cx="12" cy="12" r="9" fill="currentColor" opacity="0.18"/><path d="M12 3a9 9 0 1 0 9 9 4 4 0 0 1-4-4 4 4 0 0 1-5-5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="9" cy="10" r="1.2" fill="currentColor"/><circle cx="13" cy="15" r="1.2" fill="currentColor"/><circle cx="15" cy="9" r="1" fill="currentColor"/></svg>
+      <span class="cccl-cookie-icon__glyph" aria-hidden="true"></span>
     </button>
     <button type="button" class="cccl-cookie-icon__dismiss" aria-label="Ocultar icono de preferencias de cookies">×</button>
   `;
@@ -173,8 +173,7 @@ export function runCookieCometTransition(
 
   const chip = document.createElement("div");
   chip.className = "cccl-cookie-comet__chip";
-  chip.innerHTML =
-    '<svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none"><circle cx="12" cy="12" r="9" fill="currentColor" opacity="0.18"/><path d="M12 3a9 9 0 1 0 9 9 4 4 0 0 1-4-4 4 4 0 0 1-5-5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="9" cy="10" r="1.2" fill="currentColor"/><circle cx="13" cy="15" r="1.2" fill="currentColor"/><circle cx="15" cy="9" r="1" fill="currentColor"/></svg>';
+  chip.innerHTML = '<span class="cccl-cookie-comet__glyph" aria-hidden="true"></span>';
   comet.append(chip);
 
   const trail = config.cookieIcon.enabled ? document.createElement("div") : null;
