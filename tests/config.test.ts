@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { normalizeConfig } from "../src/config";
+import { defaultFontFamily, normalizeConfig } from "../src/config";
 
 describe("normalizeConfig", () => {
   it("uses Chilean defaults and disables optional categories in ethical mode", () => {
@@ -11,6 +11,7 @@ describe("normalizeConfig", () => {
 
     expect(config.language).toBe("es-CL");
     expect(config.ethicalMode).toBe(true);
+    expect(config.theme.fontFamily).toBe(defaultFontFamily);
     expect(config.cookieIcon).toMatchObject({ enabled: true, position: "bottom-right" });
     expect(config.animation).toMatchObject({ enabled: true, type: "cookie-comet" });
     expect(config.categories.find((category) => category.id === "necessary")?.defaultValue).toBe(true);
@@ -57,5 +58,27 @@ describe("normalizeConfig", () => {
     });
 
     expect(config.cookieIcon.position).toBe("bottom-left");
+  });
+
+  it("normalizes safe font families", () => {
+    const config = normalizeConfig({
+      siteId: "demo",
+      policyVersion: "2026-01-01",
+      bannerVersion: "1.0.0",
+      theme: { fontFamily: '"Inter", system-ui, sans-serif' }
+    });
+
+    expect(config.theme.fontFamily).toBe('"Inter", system-ui, sans-serif');
+  });
+
+  it("ignores suspicious font family values", () => {
+    const config = normalizeConfig({
+      siteId: "demo",
+      policyVersion: "2026-01-01",
+      bannerVersion: "1.0.0",
+      theme: { fontFamily: 'system-ui; background: url("https://example.com/x")' }
+    });
+
+    expect(config.theme.fontFamily).toBe(defaultFontFamily);
   });
 });

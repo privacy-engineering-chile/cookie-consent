@@ -1,8 +1,11 @@
 /* global document, crypto, FormData, window, navigator */
 
 const form = document.querySelector("#config-form");
+const siteTypeGrid = document.querySelector("#site-type-grid");
 const presetGrid = document.querySelector("#preset-grid");
+const fontPresetGrid = document.querySelector("#font-preset-grid");
 const positionGrid = document.querySelector("#position-grid");
+const toolMap = document.querySelector("#tool-map");
 const categoryList = document.querySelector("#category-list");
 const integrationList = document.querySelector("#integration-list");
 const integrationCode = document.querySelector("#integration-code");
@@ -14,9 +17,13 @@ const toggleCodeButton = document.querySelector("#toggle-code");
 const installStepAssets = document.querySelector("#install-step-assets");
 const policyUrlFields = document.querySelector("#policy-url-fields");
 const policyEmptyNote = document.querySelector("#policy-empty-note");
-const cdnVersion = "0.1.0";
+const ethicsReview = document.querySelector("#ethics-review");
+const auditSummary = document.querySelector("#audit-summary");
+const summaryCopyStatus = document.querySelector("#summary-copy-status");
+const cdnVersion = "0.2.0";
 const cdnBaseUrl = `https://cdn.jsdelivr.net/npm/cookie-consent-cl@${cdnVersion}/dist`;
 const selfHostBaseUrl = "/dist";
+const defaultFontFamily = 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
 
 if ("scrollRestoration" in window.history) {
   window.history.scrollRestoration = "manual";
@@ -70,11 +77,91 @@ const presets = [
   }
 ];
 
+const fontPresets = [
+  {
+    id: "system",
+    label: "Sistema",
+    sample: "Clara y familiar",
+    fontFamily: defaultFontFamily
+  },
+  {
+    id: "serif",
+    label: "Serif editorial",
+    sample: "Más editorial",
+    fontFamily: 'Georgia, "Times New Roman", serif'
+  },
+  {
+    id: "mono",
+    label: "Mono técnica",
+    sample: "Precisa y técnica",
+    fontFamily: '"SFMono-Regular", Consolas, "Liberation Mono", monospace'
+  },
+  {
+    id: "rounded",
+    label: "Redondeada",
+    sample: "Amable y simple",
+    fontFamily: '"Nunito", "Aptos Rounded", "Arial Rounded MT Bold", system-ui, sans-serif'
+  }
+];
+
 const positions = [
   { id: "center", label: "Centro", previewClass: "pos-center" },
   { id: "bottom-left", label: "Abajo izquierda", previewClass: "pos-bottom-left" },
   { id: "bottom-right", label: "Abajo derecha", previewClass: "pos-bottom-right" },
   { id: "bottom", label: "Abajo centro", previewClass: "pos-bottom" }
+];
+
+const siteProfiles = [
+  {
+    id: "informativo",
+    label: "Sitio informativo",
+    description: "Para páginas simples con contenido, formulario de contacto y medición básica.",
+    recommendedTools: ["ga4", "maps"],
+    bannerDescription:
+      "Usamos cookies necesarias para que este sitio funcione. Con tu autorización, podemos usar analítica para mejorar contenidos y servicios.",
+    preferencesDescription:
+      "Elige qué categorías autorizar. Las cookies necesarias se mantienen activas porque permiten el funcionamiento básico del sitio."
+  },
+  {
+    id: "pyme",
+    label: "PYME / servicios",
+    description: "Para negocios que usan formularios, mapas, WhatsApp o campañas puntuales.",
+    recommendedTools: ["ga4", "meta", "maps"],
+    bannerDescription:
+      "Usamos cookies necesarias para operar el sitio. Con tu autorización, podemos medir visitas, mejorar servicios y cargar herramientas externas.",
+    preferencesDescription:
+      "Puedes autorizar analítica, marketing o preferencias. Las necesarias siguen activas para que el sitio funcione correctamente."
+  },
+  {
+    id: "ecommerce",
+    label: "Ecommerce simple",
+    description: "Para tiendas que miden conversiones o usan herramientas de marketing.",
+    recommendedTools: ["ga4", "gtm", "meta", "hubspot"],
+    bannerDescription:
+      "Usamos cookies necesarias para navegación y funcionamiento del sitio. Con tu autorización, podemos medir compras, campañas y preferencias.",
+    preferencesDescription:
+      "Configura qué herramientas pueden activarse. Las cookies necesarias se mantienen porque sostienen funciones básicas del sitio."
+  },
+  {
+    id: "ong",
+    label: "ONG / comunidad",
+    description: "Para organizaciones que priorizan claridad, bajo seguimiento y contenido embebido.",
+    recommendedTools: ["youtube", "maps", "customIframe"],
+    bannerDescription:
+      "Usamos cookies necesarias para que el sitio funcione. Algunos contenidos externos o preferencias solo se cargarán si los autorizas.",
+    preferencesDescription:
+      "Puedes elegir si autorizas contenidos externos o preferencias. Las cookies necesarias permiten el funcionamiento básico del sitio."
+  },
+  {
+    id: "medio",
+    label: "Medio o blog",
+    description: "Para publicaciones con analítica, videos embebidos o newsletter.",
+    recommendedTools: ["ga4", "youtube", "typeform"],
+    bannerDescription:
+      "Usamos cookies necesarias para entregar el sitio. Con tu autorización, podemos usar analítica y cargar contenidos externos.",
+    preferencesDescription:
+      "Elige qué categorías autorizar. Puedes cambiar tu decisión después desde el icono de preferencias."
+  }
 ];
 
 const integrationLabels = {
@@ -181,6 +268,58 @@ const integrationMeta = {
   }
 };
 
+const toolCatalog = [
+  {
+    type: "ga4",
+    title: "Google Analytics",
+    helper: "Medición de visitas y comportamiento agregado.",
+    consent: "analytics",
+    reason: "Debe cargarse solo cuando la persona autorice Analítica."
+  },
+  {
+    type: "gtm",
+    title: "Google Tag Manager",
+    helper: "Puede activar otras etiquetas desde un contenedor.",
+    consent: "analytics",
+    reason: "Úsalo con cuidado: GTM puede disparar analítica o marketing."
+  },
+  {
+    type: "meta",
+    title: "Meta Pixel",
+    helper: "Medición de campañas y atribución publicitaria.",
+    consent: "marketing",
+    reason: "Normalmente corresponde a Marketing."
+  },
+  {
+    type: "youtube",
+    title: "YouTube",
+    helper: "Videos embebidos o contenido de terceros.",
+    consent: "preferences",
+    reason: "Cárgalo después de autorización o interacción clara."
+  },
+  {
+    type: "maps",
+    title: "Google Maps",
+    helper: "Mapas embebidos para dirección o puntos de atención.",
+    consent: "preferences",
+    reason: "Puede implicar solicitudes a terceros."
+  },
+  {
+    type: "hubspot",
+    title: "HubSpot",
+    helper: "CRM, formularios o tracking comercial.",
+    consent: "marketing",
+    reason: "Asócialo a Marketing salvo que tu caso sea estrictamente funcional."
+  },
+  {
+    type: "custom",
+    title: "Otro script",
+    helper: "Script externo o integración propia.",
+    consent: "analytics",
+    reason: "Revisa qué hace antes de publicarlo."
+  }
+];
+
 const suggestedIntegrations = {
   necessary: ["custom"],
   analytics: ["ga4", "gtm", "hotjar", "clarity", "custom"],
@@ -189,6 +328,7 @@ const suggestedIntegrations = {
 };
 
 const state = {
+  siteProfile: "pyme",
   categories: [
     {
       id: "necessary",
@@ -223,7 +363,8 @@ const state = {
       signals: ["functionality_storage", "personalization_storage"]
     }
   ],
-  integrations: []
+  integrations: [],
+  cookieDeclarations: []
 };
 
 function field(name) {
@@ -267,6 +408,47 @@ function renderPresets() {
     .join("");
 }
 
+function renderFontPresets() {
+  fontPresetGrid.innerHTML = fontPresets
+    .map(
+      (preset, index) => `
+        <label class="font-preset-card" style="--font-preview-family:${preset.fontFamily || defaultFontFamily};">
+          <input type="radio" name="fontPreset" value="${preset.id}" ${index === 0 ? "checked" : ""}>
+          <span>
+            <strong>${preset.label}</strong>
+            <em>${preset.sample}</em>
+          </span>
+        </label>
+      `
+    )
+    .join("");
+}
+
+function renderSiteProfiles() {
+  siteTypeGrid.innerHTML = siteProfiles
+    .map(
+      (profile) => `
+        <label class="site-type-card">
+          <input type="radio" name="siteProfile" value="${profile.id}" ${profile.id === state.siteProfile ? "checked" : ""}>
+          <span>
+            <strong>${profile.label}</strong>
+            <small>${profile.description}</small>
+          </span>
+          <em>${profile.recommendedTools.map((type) => integrationLabels[type]).join(", ")}</em>
+        </label>
+      `
+    )
+    .join("");
+}
+
+function applySiteProfile(profileId) {
+  const profile = siteProfiles.find((item) => item.id === profileId);
+  if (!profile) return;
+  state.siteProfile = profile.id;
+  setField("bannerDescription", profile.bannerDescription);
+  setField("preferencesDescription", profile.preferencesDescription);
+}
+
 function renderPositions() {
   positionGrid.innerHTML = positions
     .map(
@@ -278,6 +460,64 @@ function renderPositions() {
         </label>
       `
     )
+    .join("");
+}
+
+function renderToolMap() {
+  const activeProfile = siteProfiles.find((profile) => profile.id === state.siteProfile) || siteProfiles[1];
+  const recommended = new Set(activeProfile.recommendedTools);
+  toolMap.innerHTML = toolCatalog
+    .map((tool) => {
+      const meta = integrationMeta[tool.type];
+      const addedIntegrations = state.integrations.filter((integration) => integration.type === tool.type);
+      const categoryExists = state.categories.some((category) => category.id === tool.consent);
+      const targetCategory = categoryExists ? tool.consent : state.categories.find((category) => !category.required)?.id || "preferences";
+      return `
+        <article class="tool-card ${recommended.has(tool.type) ? "tool-card--recommended" : ""}" data-tool-type="${tool.type}">
+          <div class="tool-card__header">
+            <div>
+              <h3>${tool.title}</h3>
+              <p>${tool.helper}</p>
+            </div>
+            ${recommended.has(tool.type) ? '<span class="category-badge">Sugerida</span>' : ""}
+          </div>
+          <p class="tool-card__reason">${tool.reason}</p>
+          ${
+            addedIntegrations.length
+              ? `<div class="tool-card__added" aria-live="polite">
+                  <strong>${addedIntegrations.length === 1 ? "Integración agregada" : "Integraciones agregadas"}</strong>
+                  ${addedIntegrations
+                    .map((integration) => {
+                      const category = state.categories.find((item) => item.id === integration.category);
+                      return `<span>${escapeHtml(integration.value)} · ${escapeHtml(category?.label || integration.category)}</span>`;
+                    })
+                    .join("")}
+                </div>`
+              : ""
+          }
+          <div class="tool-card__form">
+            <label>
+              Categoría
+              <select data-tool-category>
+                ${state.categories
+                  .filter((category) => !category.required || tool.type === "custom")
+                  .map(
+                    (category) =>
+                      `<option value="${category.id}" ${category.id === targetCategory ? "selected" : ""}>${escapeHtml(category.label)}</option>`
+                  )
+                  .join("")}
+              </select>
+            </label>
+            <label>
+              ${meta.requiredLabel}
+              <input data-tool-value placeholder="${meta.placeholder}" />
+            </label>
+            <button class="button button--secondary" type="button" data-add-tool="${tool.type}">Agregar</button>
+          </div>
+          <p class="form-error" data-tool-error role="alert" aria-live="polite"></p>
+        </article>
+      `;
+    })
     .join("");
 }
 
@@ -439,6 +679,7 @@ function syncColorLabels() {
   form.style.setProperty("--cc-preview-bg", value("backgroundColor"));
   form.style.setProperty("--cc-preview-text", value("textColor"));
   form.style.setProperty("--cc-preview-primary", value("primaryColor"));
+  form.style.setProperty("--cc-preview-font", selectedFontFamily());
 }
 
 function applyPreset() {
@@ -446,6 +687,15 @@ function applyPreset() {
   setField("backgroundColor", preset.backgroundColor);
   setField("textColor", preset.textColor);
   setField("primaryColor", preset.primaryColor);
+}
+
+function selectedFontFamily() {
+  const selectedPreset = fontPresets.find((item) => item.id === value("fontPreset")) || fontPresets[0];
+  return selectedPreset.fontFamily;
+}
+
+function isCustomFontSelected() {
+  return selectedFontFamily() !== defaultFontFamily;
 }
 
 function slugify(raw) {
@@ -474,7 +724,8 @@ function buildConfig() {
     theme: {
       primaryColor: value("primaryColor"),
       backgroundColor: value("backgroundColor"),
-      textColor: value("textColor")
+      textColor: value("textColor"),
+      ...(isCustomFontSelected() ? { fontFamily: selectedFontFamily() } : {})
     },
     background: {
       enabled: checked("blockBackground"),
@@ -519,31 +770,8 @@ function buildConfig() {
 }
 
 function buildCookieDeclarations() {
-  const cookies = [
-    {
-      name: "_ga",
-      provider: "Google Analytics",
-      category: "analytics",
-      duration: "2 anos",
-      purpose: "Distinguir usuarios para generar estadisticas de uso del sitio."
-    },
-    {
-      name: "_fbp",
-      provider: "Meta",
-      category: "marketing",
-      duration: "3 meses",
-      purpose: "Medir campanas o atribuir conversiones publicitarias."
-    },
-    {
-      name: "cc_preference",
-      provider: "Sitio web",
-      category: "preferences",
-      duration: "6 meses",
-      purpose: "Recordar preferencias de experiencia elegidas por la persona."
-    }
-  ];
   const categoryIds = new Set(state.categories.map((category) => category.id));
-  return cookies.filter((cookie) => categoryIds.has(cookie.category));
+  return state.cookieDeclarations.filter((cookie) => categoryIds.has(cookie.category));
 }
 
 function buildIntegrationSnippets(categoryId = null) {
@@ -688,6 +916,109 @@ function renderCode() {
   syncCodeExpansion();
 }
 
+function renderEthicsReview() {
+  const config = buildConfig();
+  const hasPolicyMode = value("policyLinksMode") === "custom";
+  const optionalDefaultOn = config.categories.some((category) => !category.required && category.defaultValue);
+  const hasBlockedSnippets = state.integrations.length > 0;
+  const checks = [
+    {
+      ok: true,
+      label: "Aceptar y rechazar tienen el mismo peso visual",
+      note: "El banner evita priorizar la aceptación por diseño."
+    },
+    {
+      ok: !optionalDefaultOn,
+      label: "Opcionales apagadas por defecto",
+      note: optionalDefaultOn ? "Revisa categorías opcionales heredadas." : "La persona decide antes de activar analítica, marketing o preferencias."
+    },
+    {
+      ok: config.cookieIcon.enabled,
+      label: "Preferencias siempre reabribles",
+      note: config.cookieIcon.enabled ? "El icono persistente permite cambiar la decisión." : "Activa el icono o agrega un enlace equivalente."
+    },
+    {
+      ok: hasBlockedSnippets,
+      label: "Scripts no esenciales usan data-cookie-consent",
+      note: hasBlockedSnippets ? "Las integraciones agregadas quedan bloqueadas hasta autorización." : "Agrega herramientas si tu sitio usa analítica, marketing o embeds."
+    },
+    {
+      ok: true,
+      label: "No se usan textos manipulativos",
+      note: "Los botones mantienen lenguaje directo y reversible."
+    },
+    {
+      ok: hasPolicyMode ? Boolean(config.cookiePolicyUrl || config.privacyPolicyUrl) : true,
+      label: "Políticas enlazadas o marcadas como pendientes",
+      note: hasPolicyMode
+        ? "Incluye al menos una URL si ya tienes políticas publicadas."
+        : "El configurador no genera enlaces falsos si aún no tienes políticas."
+    }
+  ];
+
+  ethicsReview.innerHTML = checks
+    .map(
+      (check) => `
+        <article class="review-item ${check.ok ? "is-ok" : "is-pending"}">
+          <span aria-hidden="true">${check.ok ? "✓" : "!"}</span>
+          <div>
+            <strong>${check.label}</strong>
+            <p>${check.note}</p>
+          </div>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function buildAuditSummaryText() {
+  const config = buildConfig();
+  const categories = config.categories
+    .map((category) => `- ${category.label} (${category.id}): ${category.required ? "requerida" : "opcional, desactivada por defecto"}`)
+    .join("\n");
+  const integrations = state.integrations.length
+    ? state.integrations
+        .map((integration) => {
+          const category = state.categories.find((item) => item.id === integration.category);
+          return `- ${integrationLabels[integration.type]}: ${category?.label || integration.category} (${integration.value})`;
+        })
+        .join("\n")
+    : "- Sin integraciones configuradas en el asistente.";
+  const cookies = buildCookieDeclarations()
+    .map((cookie) => `- ${cookie.name}: ${cookie.provider}, ${cookie.category}, ${cookie.duration}`)
+    .join("\n");
+  const policies = [
+    config.cookiePolicyUrl ? `- Política de cookies: ${config.cookiePolicyUrl}` : "- Política de cookies: pendiente o no configurada",
+    config.privacyPolicyUrl ? `- Política de privacidad: ${config.privacyPolicyUrl}` : "- Política de privacidad: pendiente o no configurada"
+  ].join("\n");
+
+  return `Resumen de configuración cookie-consent-cl
+
+Sitio: ${config.siteId}
+Idioma: ${config.language}
+Versión de política: ${config.policyVersion}
+Versión del banner: ${config.bannerVersion}
+Tipo de sitio sugerido: ${siteProfiles.find((profile) => profile.id === state.siteProfile)?.label || "Manual"}
+
+Categorías:
+${categories}
+
+Integraciones bloqueadas por consentimiento:
+${integrations}
+
+Cookies declaradas:
+${cookies || "- Sin cookies declaradas."}
+
+Políticas:
+${policies}
+
+Nota: Este resumen es una bitácora técnica. No constituye asesoría legal ni garantiza cumplimiento normativo por sí solo.`;
+}
+
+function renderAuditSummary() {
+  auditSummary.innerHTML = `<pre>${escapeHtml(buildAuditSummaryText())}</pre>`;
+}
+
 function renderInstallMethod() {
   document.querySelectorAll(".install-method").forEach((label) => {
     const input = label.querySelector("input");
@@ -751,8 +1082,11 @@ function updateAll({ restart = false } = {}) {
   syncConditionalSections();
   syncRangeLabels();
   syncColorLabels();
+  renderToolMap();
   renderIntegrations();
   renderCode();
+  renderEthicsReview();
+  renderAuditSummary();
   sendPreview({ restart });
 }
 
@@ -825,6 +1159,35 @@ function addIntegration(categoryCard) {
   updateAll();
 }
 
+function addToolIntegration(toolCard) {
+  const type = toolCard.dataset.toolType;
+  const category = toolCard.querySelector("[data-tool-category]")?.value;
+  const valueControl = toolCard.querySelector("[data-tool-value]");
+  const error = toolCard.querySelector("[data-tool-error]");
+  const raw = valueControl.value.trim();
+  const meta = integrationMeta[type];
+  error.textContent = "";
+
+  if (!raw) {
+    error.textContent = `Ingresa un ${meta.requiredLabel} para agregar ${meta.label}.`;
+    return;
+  }
+  if (["custom", "customIframe", "maps", "calendly", "typeform"].includes(type) && !/^https?:\/\//i.test(raw)) {
+    error.textContent = "La URL debe comenzar con http:// o https://.";
+    return;
+  }
+
+  state.integrations.push({
+    id: crypto.randomUUID(),
+    type,
+    category,
+    value: raw
+  });
+  valueControl.value = "";
+  renderCategories();
+  updateAll();
+}
+
 function resetPreview() {
   previewMode = "banner";
   sendPreview({ restart: true, mode: "banner" });
@@ -832,6 +1195,7 @@ function resetPreview() {
 
 function setupEvents() {
   form.addEventListener("input", (event) => {
+    if (event.target.closest("#tool-map")) return;
     if (event.target.name === "preset") applyPreset();
     if (event.target.dataset.catField || event.target.dataset.signal) {
       updateCategoryFromInput(event.target);
@@ -840,6 +1204,13 @@ function setupEvents() {
   });
 
   form.addEventListener("change", (event) => {
+    if (event.target.name === "siteProfile") {
+      applySiteProfile(event.target.value);
+      renderSiteProfiles();
+      updateAll();
+      return;
+    }
+    if (event.target.closest("#tool-map")) return;
     if (event.target.name === "installMethod") {
       installMethod = event.target.value;
       renderCode();
@@ -870,6 +1241,10 @@ function setupEvents() {
     if (addCategoryIntegration) {
       addIntegration(addCategoryIntegration.closest("[data-category-id]"));
     }
+    const addTool = event.target.closest("[data-add-tool]");
+    if (addTool) {
+      addToolIntegration(addTool.closest("[data-tool-type]"));
+    }
   });
 
   document.querySelector("#add-category").addEventListener("click", addCategory);
@@ -896,6 +1271,14 @@ function setupEvents() {
     syncCodeExpansion();
   });
 
+  document.querySelector("#copy-summary").addEventListener("click", async () => {
+    const copied = await copyToClipboard(buildAuditSummaryText());
+    summaryCopyStatus.textContent = copied ? "Resumen copiado" : "Selecciona el resumen para copiar";
+    window.setTimeout(() => {
+      summaryCopyStatus.textContent = "";
+    }, 2200);
+  });
+
   window.addEventListener("message", (event) => {
     if (event.data?.type === "cccl-preview-ready") {
       previewReady = true;
@@ -914,8 +1297,11 @@ function setupEvents() {
   });
 }
 
+renderSiteProfiles();
 renderPresets();
+renderFontPresets();
 renderPositions();
+applySiteProfile(state.siteProfile);
 applyPreset();
 renderCategories();
 renderIntegrations();

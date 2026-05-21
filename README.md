@@ -42,9 +42,9 @@ La Ley 21.719 refuerza la importancia de tratar datos personales con bases clara
 ```html
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/cookie-consent-cl@0.1.0/dist/cookie-consent-cl.css"
+  href="https://cdn.jsdelivr.net/npm/cookie-consent-cl@0.2.0/dist/cookie-consent-cl.css"
 />
-<script src="https://cdn.jsdelivr.net/npm/cookie-consent-cl@0.1.0/dist/cookie-consent-cl.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/cookie-consent-cl@0.2.0/dist/cookie-consent-cl.iife.js"></script>
 <script>
   window.CookieConsentCL.init({
     siteId: "demo-site",

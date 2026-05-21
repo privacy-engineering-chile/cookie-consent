@@ -42,6 +42,7 @@ export interface ConsentTheme {
   primaryColor?: string;
   backgroundColor?: string;
   textColor?: string;
+  fontFamily?: string;
 }
 
 export interface ConsentBackground {
@@ -170,6 +171,15 @@ export const defaultText: Required<ConsentText> = {
   changePreferences: "Revisar preferencias"
 };
 
+export const defaultFontFamily = 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+
+export function sanitizeFontFamily(fontFamily?: string): string | undefined {
+  const next = fontFamily?.trim();
+  if (!next) return undefined;
+  if (/[<>{};]/.test(next) || /url\s*\(/i.test(next)) return undefined;
+  return next;
+}
+
 export function normalizeConfig(config: CookieConsentConfig): NormalizedCookieConsentConfig {
   if (!config.siteId) {
     throw new Error("CookieConsentCL requiere siteId.");
@@ -199,7 +209,8 @@ export function normalizeConfig(config: CookieConsentConfig): NormalizedCookieCo
     theme: {
       primaryColor: config.theme?.primaryColor ?? "#111827",
       backgroundColor: config.theme?.backgroundColor ?? "#ffffff",
-      textColor: config.theme?.textColor ?? "#111827"
+      textColor: config.theme?.textColor ?? "#111827",
+      fontFamily: sanitizeFontFamily(config.theme?.fontFamily) ?? defaultFontFamily
     },
     background: {
       enabled: config.background?.enabled ?? false,

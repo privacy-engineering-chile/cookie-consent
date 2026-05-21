@@ -21,18 +21,27 @@ export function renderPreferencesModal(
   const categoryMarkup = config.categories
     .map((category) => {
       const checked = category.required || selectedCategories[category.id] ? "checked" : "";
-      const disabled = category.required ? "disabled" : "";
+      const controlMarkup = category.required
+        ? `
+          <div class="cccl-required-status" aria-label="${category.label}: siempre activa">
+            <span class="cccl-required-status__dot" aria-hidden="true"></span>
+            <span>Siempre activa</span>
+          </div>
+        `
+        : `
+          <label class="cccl-switch">
+            <span class="cccl-switch__label">Autorizar</span>
+            <input type="checkbox" name="${category.id}" ${checked} aria-label="${category.label}">
+            <span class="cccl-switch__track" aria-hidden="true"></span>
+          </label>
+        `;
       return `
-        <div class="cccl-category">
+        <div class="cccl-category ${category.required ? "cccl-category--required" : ""}">
           <div>
             <h3 class="cccl-category__title">${category.label}</h3>
             <p class="cccl-category__description">${category.description}</p>
           </div>
-          <label class="cccl-switch">
-            <span class="cccl-switch__label">${category.required ? "Siempre activa" : "Autorizar"}</span>
-            <input type="checkbox" name="${category.id}" ${checked} ${disabled} aria-label="${category.label}">
-            <span class="cccl-switch__track" aria-hidden="true"></span>
-          </label>
+          ${controlMarkup}
         </div>
       `;
     })

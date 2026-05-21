@@ -16,9 +16,20 @@
 .cccl-banner,
 .cccl-modal-root,
 .cccl-preferences-notice,
+.cccl-cookie-icon,
+.cccl-cookie-comet,
 .cccl-cookie-table {
   font-family: var(--cccl-font);
   color: var(--cccl-text-color);
+}
+
+.cccl-banner *,
+.cccl-modal-root *,
+.cccl-preferences-notice *,
+.cccl-cookie-icon *,
+.cccl-cookie-comet *,
+.cccl-cookie-table * {
+  font-family: inherit;
 }
 
 .cccl-banner {
@@ -117,6 +128,7 @@
   border: 1px solid var(--cccl-primary-color);
   border-radius: 6px;
   padding: 9px 13px;
+  font-family: inherit;
   font-weight: 700;
   font-size: 0.95rem;
   cursor: pointer;
@@ -225,6 +237,7 @@
   height: 100%;
   border: 1px solid var(--cccl-primary-color);
   border-radius: 999px;
+  font-family: inherit;
   color: inherit;
   background: inherit;
   cursor: pointer;
@@ -257,6 +270,7 @@
   padding: 0;
   background: var(--cccl-background-color);
   color: var(--cccl-text-color);
+  font-family: inherit;
   font-size: 14px;
   font-weight: 800;
   line-height: 1;
@@ -485,6 +499,10 @@
   border-radius: 8px;
 }
 
+.cccl-category--required {
+  background: color-mix(in srgb, var(--cccl-background-color) 92%, var(--cccl-primary-color));
+}
+
 .cccl-category__title {
   margin: 0 0 4px;
   font-size: 0.95rem;
@@ -539,6 +557,31 @@
 
 .cccl-switch input:checked + .cccl-switch__track::after {
   transform: translateX(20px);
+}
+
+.cccl-required-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 118px;
+  border: 1px solid color-mix(in srgb, var(--cccl-primary-color) 36%, var(--cccl-border-color));
+  border-radius: 999px;
+  padding: 8px 10px;
+  background: var(--cccl-background-color);
+  color: var(--cccl-text-color);
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: default;
+  user-select: none;
+}
+
+.cccl-required-status__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--cccl-primary-color);
+  opacity: 0.84;
 }
 
 .cccl-cookie-table {

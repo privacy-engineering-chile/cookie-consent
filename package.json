@@ -1,6 +1,6 @@
 {
   "name": "cookie-consent-cl",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Open source cookie consent manager for Chilean websites.",
   "license": "MIT",
   "type": "module",
@@ -33,6 +33,7 @@
   "files": [
     "dist",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "scripts": {

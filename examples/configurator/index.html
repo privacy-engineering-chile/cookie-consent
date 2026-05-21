@@ -10,10 +10,18 @@
     <main class="workspace" id="configurador">
       <form class="wizard" id="config-form">
         <div class="wizard__header">
-          <p class="eyebrow">Generador de banner de cookies</p>
-          <h1>Crea tu banner de cookies</h1>
-          <p>Usa este asistente para configurar un banner claro y copiar el código en minutos.</p>
+          <h1>Crea tu banner de cookies gratis</h1>
         </div>
+
+        <details class="panel panel--guide" open>
+          <summary>Tipo de sitio</summary>
+          <div class="panel__body">
+            <p class="helper">
+              Parte desde un contexto real. El asistente ajusta textos y sugiere herramientas frecuentes sin cargarlas en esta demo.
+            </p>
+            <div class="site-type-grid" id="site-type-grid"></div>
+          </div>
+        </details>
 
         <details class="panel" open>
           <summary>Colores</summary>
@@ -43,6 +51,16 @@
               </label>
             </div>
             <input type="hidden" name="borderRadius" value="18" />
+          </div>
+        </details>
+
+        <details class="panel">
+          <summary>Tipografía</summary>
+          <div class="panel__body">
+            <p class="helper">
+              Estos presets muestran que la tipografía también se puede ajustar. Si necesitas una fuente propia, puedes cambiar <code>theme.fontFamily</code> en el código generado y cargar esa fuente desde tu sitio.
+            </p>
+            <div class="font-preset-grid" id="font-preset-grid"></div>
           </div>
         </details>
 
@@ -128,8 +146,18 @@
           </div>
         </details>
 
+        <details class="panel" open>
+          <summary>Herramientas que usa tu sitio</summary>
+          <div class="panel__body">
+            <p class="helper">
+              Agrega servicios que puedan crear cookies, seguimiento o contenido externo. El generador preparará snippets bloqueados por categoría.
+            </p>
+            <div class="tool-map" id="tool-map"></div>
+          </div>
+        </details>
+
         <details class="panel">
-          <summary>Tipos de consentimiento</summary>
+          <summary>Categorías de consentimiento</summary>
           <div class="panel__body">
             <p class="helper">
               Define las categorias que vera la persona al configurar sus preferencias. Las categorias opcionales se
@@ -209,6 +237,30 @@
           </div>
         </details>
 
+        <details class="panel">
+          <summary>Revisión antes de instalar</summary>
+          <div class="panel__body">
+            <p class="helper">
+              Una revisión compacta de buenas prácticas. No garantiza cumplimiento normativo, pero ayuda a evitar decisiones confusas o poco éticas.
+            </p>
+            <div class="ethics-review" id="ethics-review"></div>
+          </div>
+        </details>
+
+        <details class="panel">
+          <summary>Resumen de configuración</summary>
+          <div class="panel__body">
+            <p class="helper">
+              Copia este resumen para dejar una bitácora técnica de cómo quedó configurado el consentimiento.
+            </p>
+            <div class="audit-summary" id="audit-summary"></div>
+            <div class="code-toolbar">
+              <span id="summary-copy-status" aria-live="polite"></span>
+              <button class="button button--ghost" type="button" id="copy-summary">Copiar resumen</button>
+            </div>
+          </div>
+        </details>
+
         <details class="panel" id="codigo">
           <summary id="codigo-title">Instrucciones de instalación</summary>
           <div class="panel__body">
@@ -220,7 +272,7 @@
                 <input type="radio" name="installMethod" value="cdn" checked />
                 <span>
                   <strong>CDN recomendado</strong>
-                  <small>Usa npm + jsDelivr con <code>cookie-consent-cl@0.1.0</code>.</small>
+                  <small>Usa npm + jsDelivr con <code>cookie-consent-cl@0.2.0</code>.</small>
                 </span>
               </label>
               <label class="install-method">

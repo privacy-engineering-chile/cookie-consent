@@ -325,6 +325,7 @@
         if (mode === "preferences") {
           CookieConsentCL.resetConsent();
           CookieConsentCL.openPreferences();
+          window.parent.postMessage({ type: "cccl-preview-mode", mode: "preferences" }, "*");
           return;
         }
 
@@ -366,6 +367,22 @@
         });
         renderMode(event.data.restart ? "banner" : event.data.mode || "banner");
       });
+
+      document.addEventListener(
+        "click",
+        (event) => {
+          const target = event.target;
+          if (!(target instanceof Element)) return;
+          const opensPreferences = target.closest('[data-action="configure"], .cccl-cookie-icon__button');
+          if (!opensPreferences) return;
+          window.setTimeout(() => {
+            if (document.querySelector("#cccl-modal-root")) {
+              window.parent.postMessage({ type: "cccl-preview-mode", mode: "preferences" }, "*");
+            }
+          }, 0);
+        },
+        true
+      );
 
       document.querySelector("#preview-restart").addEventListener("click", () => {
         window.parent.postMessage({ type: "cccl-preview-restart" }, "*");

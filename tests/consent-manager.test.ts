@@ -64,6 +64,18 @@ describe("ConsentManager", () => {
     expect(document.querySelector(".cccl-modal-summary")?.textContent).toContain("Elige que categorias autorizar");
   });
 
+  it("renders required categories as fixed status instead of clickable switches", () => {
+    const manager = createManager();
+
+    manager.openPreferences();
+
+    const necessaryCategory = document.querySelector(".cccl-category--required");
+    expect(necessaryCategory?.textContent).toContain("Necesarias");
+    expect(necessaryCategory?.querySelector(".cccl-required-status")?.textContent).toContain("Siempre activa");
+    expect(necessaryCategory?.querySelector('input[type="checkbox"]')).toBeNull();
+    expect(document.querySelectorAll(".cccl-switch input").length).toBe(3);
+  });
+
   it("renders policy links and cookie detail link when declarations exist", () => {
     const manager = new ConsentManager();
     manager.init({
