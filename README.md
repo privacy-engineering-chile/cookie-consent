@@ -8,6 +8,24 @@ Gestor open source de consentimiento de cookies para sitios web chilenos.
 
 `cookie-consent-cl` es una libreria ligera en TypeScript para mostrar un banner de consentimiento, permitir preferencias por categoria, guardar la decision en `localStorage`, activar scripts solo despues del consentimiento y emitir senales compatibles con Google Consent Mode v2.
 
+## Configurador visual
+
+El proyecto incluye un configurador interactivo pensado para PYMEs chilenas, equipos tecnicos y proyectos civicos:
+
+- permite probar colores, tipografia, posicion e icono;
+- sugiere herramientas frecuentes segun tipo de sitio;
+- genera snippets bloqueados por consentimiento;
+- produce un resumen de configuracion auditable;
+- entrega instrucciones de instalacion por CDN o self-host.
+
+En desarrollo local:
+
+```txt
+http://127.0.0.1:5173/examples/configurator/
+```
+
+Cuando el sitio publico este activo, la landing principal puede apuntar directamente al configurador.
+
 ## ¿Por que otro gestor de consentimiento?
 
 Muchas soluciones son SaaS pesados, requieren cuenta, incluyen tracking propio o usan interfaces confusas. Este proyecto busca ser un bloque tecnico pequeno, auditable, sin backend y con defaults pensados para Chile.
@@ -133,6 +151,12 @@ El build genera:
 - `dist/cookie-consent-cl.iife.js`
 - `dist/cookie-consent-cl.css`
 - declaraciones TypeScript en `dist/`
+
+## Publicacion del sitio y lanzamiento
+
+- Guia de despliegue del sitio: [`docs/deployment.md`](docs/deployment.md)
+- Material de lanzamiento v0.2.0: [`docs/launch-v0.2.0.md`](docs/launch-v0.2.0.md)
+- Historial de cambios: [`CHANGELOG.md`](CHANGELOG.md)
 
 ## Configuracion
 

@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="es-CL">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Gestor open source de consentimiento de cookies para sitios web chilenos. Sin backend, sin cuentas y sin tracking propio."
+    />
+    <title>cookie-consent-cl · Consentimiento de cookies para Chile</title>
+    <style>
+      :root {
+        color: #0f172a;
+        background: #f8fafc;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background:
+          radial-gradient(circle at 14% 12%, rgba(37, 99, 235, 0.14), transparent 24rem),
+          radial-gradient(circle at 88% 18%, rgba(16, 185, 129, 0.12), transparent 22rem),
+          linear-gradient(180deg, #ffffff 0%, #f8fafc 52%, #eef6ff 100%);
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .page {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 22px 0;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 900;
+      }
+
+      .brand-mark {
+        width: 34px;
+        height: 34px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #2563eb, #10b981);
+      }
+
+      .nav-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        color: #475569;
+        font-size: 0.95rem;
+        font-weight: 750;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+        gap: 42px;
+        align-items: center;
+        min-height: calc(100vh - 90px);
+        padding: 44px 0 72px;
+      }
+
+      .eyebrow {
+        margin: 0 0 14px;
+        color: #2563eb;
+        font-size: 0.82rem;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        max-width: 12ch;
+        margin: 0;
+        font-size: clamp(2.55rem, 8vw, 5.5rem);
+        line-height: 0.96;
+        letter-spacing: 0;
+      }
+
+      .lead {
+        max-width: 64ch;
+        margin: 24px 0 0;
+        color: #475569;
+        font-size: clamp(1.05rem, 2vw, 1.25rem);
+        line-height: 1.6;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 30px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        border: 1px solid #cbd5e1;
+        border-radius: 999px;
+        padding: 12px 18px;
+        background: #ffffff;
+        color: #0f172a;
+        font-weight: 850;
+        text-decoration: none;
+      }
+
+      .button--primary {
+        border-color: #2563eb;
+        background: #2563eb;
+        color: #ffffff;
+        box-shadow: 0 18px 42px rgba(37, 99, 235, 0.26);
+      }
+
+      .badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 26px;
+      }
+
+      .badge {
+        border: 1px solid #dbe3ef;
+        border-radius: 999px;
+        padding: 7px 10px;
+        background: rgba(255, 255, 255, 0.74);
+        color: #334155;
+        font-size: 0.86rem;
+        font-weight: 800;
+      }
+
+      .preview {
+        border: 1px solid #dbe3ef;
+        border-radius: 28px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.78);
+        box-shadow: 0 30px 90px rgba(15, 23, 42, 0.12);
+      }
+
+      .browser {
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        border-radius: 22px;
+        background: #f8fafc;
+      }
+
+      .browser-top {
+        display: flex;
+        gap: 7px;
+        padding: 14px;
+        border-bottom: 1px solid #e2e8f0;
+        background: #ffffff;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: #cbd5e1;
+      }
+
+      .browser-body {
+        display: grid;
+        gap: 14px;
+        padding: 22px;
+      }
+
+      .line,
+      .card-line {
+        display: block;
+        border-radius: 999px;
+        background: #dbeafe;
+      }
+
+      .line {
+        width: 74%;
+        height: 18px;
+      }
+
+      .line:nth-child(2) {
+        width: 48%;
+        height: 12px;
+      }
+
+      .mock-banner {
+        display: grid;
+        gap: 12px;
+        margin-top: 22px;
+        border: 1px solid #dbe3ef;
+        border-radius: 18px;
+        padding: 16px;
+        background: #ffffff;
+        box-shadow: 0 18px 48px rgba(15, 23, 42, 0.12);
+      }
+
+      .mock-banner h2 {
+        margin: 0;
+        font-size: 1rem;
+      }
+
+      .mock-banner p {
+        margin: 0;
+        color: #64748b;
+        font-size: 0.9rem;
+        line-height: 1.45;
+      }
+
+      .mock-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .mock-actions span {
+        border: 1px solid #2563eb;
+        border-radius: 8px;
+        padding: 8px 10px;
+        color: #2563eb;
+        font-size: 0.82rem;
+        font-weight: 850;
+      }
+
+      .section {
+        padding: 58px 0;
+      }
+
+      .section h2 {
+        margin: 0 0 14px;
+        font-size: clamp(1.8rem, 3vw, 2.6rem);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 24px;
+      }
+
+      .card {
+        border: 1px solid #dbe3ef;
+        border-radius: 22px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.82);
+      }
+
+      .card h3 {
+        margin: 0 0 8px;
+      }
+
+      .card p {
+        margin: 0;
+        color: #64748b;
+        line-height: 1.55;
+      }
+
+      .notice {
+        border: 1px solid #f59e0b;
+        border-radius: 22px;
+        padding: 18px;
+        background: #fffbeb;
+        color: #451a03;
+        line-height: 1.55;
+      }
+
+      footer {
+        padding: 34px 0 46px;
+        color: #64748b;
+      }
+
+      @media (max-width: 860px) {
+        .hero,
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .hero {
+          min-height: auto;
+        }
+
+        .nav {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <nav class="nav" aria-label="Principal">
+        <a class="brand" href="./">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>cookie-consent-cl</span>
+        </a>
+        <div class="nav-links">
+          <a href="./examples/configurator/">Configurador</a>
+          <a href="./README.md">Documentacion</a>
+          <a href="https://github.com/privacy-engineering-chile/cookie-consent">GitHub</a>
+          <a href="https://www.npmjs.com/package/cookie-consent-cl">npm</a>
+        </div>
+      </nav>
+
+      <main>
+        <section class="hero">
+          <div>
+            <p class="eyebrow">Open source · Chile · Privacidad por diseño</p>
+            <h1>Consentimiento de cookies claro y configurable</h1>
+            <p class="lead">
+              Gestor open source de consentimiento de cookies para sitios web chilenos. Sin backend. Sin cuentas.
+              Sin tracking propio. Pensado para equipos técnicos, PYMEs, civic tech y organizaciones que quieren
+              implementar experiencias claras y sin dark patterns.
+            </p>
+            <div class="actions">
+              <a class="button button--primary" href="./examples/configurator/">Crear banner de cookies</a>
+              <a class="button" href="https://github.com/privacy-engineering-chile/cookie-consent">Ver en GitHub</a>
+            </div>
+            <div class="badges" aria-label="Caracteristicas">
+              <span class="badge">CDN via npm + jsDelivr</span>
+              <span class="badge">Google Consent Mode v2</span>
+              <span class="badge">Script blocking</span>
+              <span class="badge">MIT</span>
+            </div>
+          </div>
+
+          <div class="preview" aria-label="Vista conceptual del banner">
+            <div class="browser">
+              <div class="browser-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+              <div class="browser-body">
+                <span class="line"></span>
+                <span class="line"></span>
+                <div class="mock-banner">
+                  <h2>Preferencias de cookies</h2>
+                  <p>Usamos cookies necesarias para que este sitio funcione. Con tu autorizacion, podemos usar otras categorias solo si las autorizas.</p>
+                  <div class="mock-actions">
+                    <span>Aceptar todas</span>
+                    <span>Rechazar no necesarias</span>
+                    <span>Configurar</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Que incluye</h2>
+          <div class="grid">
+            <article class="card">
+              <h3>Configurador visual</h3>
+              <p>Genera una configuracion inicial, prueba el flujo y copia el codigo de instalacion con CDN o self-host.</p>
+            </article>
+            <article class="card">
+              <h3>Buenas practicas</h3>
+              <p>Rechazar es tan visible como aceptar, las categorias opcionales parten apagadas y las preferencias se pueden cambiar.</p>
+            </article>
+            <article class="card">
+              <h3>Integraciones bloqueadas</h3>
+              <p>Prepara snippets con <code>type="text/plain"</code> y <code>data-cookie-consent</code> para cargar herramientas despues del consentimiento.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="notice">
+            Este proyecto no constituye asesoria legal ni garantiza cumplimiento normativo por si solo. Es una
+            herramienta tecnica para facilitar una implementacion mas clara, especifica y auditable del consentimiento
+            de cookies.
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        MIT License · Privacy Engineering Chile · cookie-consent-cl v0.2.0
+      </footer>
+    </div>
+  </body>
+</html>
