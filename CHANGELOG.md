@@ -2,6 +2,26 @@
 
 Todas las notas importantes de este proyecto se documentan en este archivo.
 
+## [0.2.1] - 2026-05-22
+
+### Agregado
+
+- Mensaje mobile-only para el configurador: la experiencia de edicion queda reservada para escritorio.
+- Selector de vista previa `Desktop` / `Movil` dentro del configurador.
+- Vista previa mobile en formato de telefono para probar el banner en pantallas pequenas.
+
+### Cambiado
+
+- El control `Reiniciar` ahora vive fuera del iframe de preview, junto al selector Desktop/Movil.
+- El iframe de preview ya no muestra un boton interno de reinicio.
+- Mejoras CSS para que el banner, modal, toast e icono del core se comporten mejor en mobile.
+- Ajustes con `safe-area` para dispositivos moviles con areas reservadas del sistema.
+
+### Compatibilidad
+
+- No hay cambios incompatibles.
+- No cambia la API publica.
+
 ## [0.2.0] - 2026-05-20
 
 ### Agregado
