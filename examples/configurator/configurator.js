@@ -1,5 +1,7 @@
 /* global document, crypto, FormData, window, navigator */
 
+import { COOKIE_CONSENT_CL_VERSION } from "./version.js";
+
 const form = document.querySelector("#config-form");
 const siteTypeGrid = document.querySelector("#site-type-grid");
 const presetGrid = document.querySelector("#preset-grid");
@@ -21,8 +23,7 @@ const policyEmptyNote = document.querySelector("#policy-empty-note");
 const ethicsReview = document.querySelector("#ethics-review");
 const auditSummary = document.querySelector("#audit-summary");
 const summaryCopyStatus = document.querySelector("#summary-copy-status");
-const cdnVersion = "0.2.0";
-const cdnBaseUrl = `https://cdn.jsdelivr.net/npm/cookie-consent-cl@${cdnVersion}/dist`;
+const cdnBaseUrl = `https://cdn.jsdelivr.net/npm/cookie-consent-cl@${COOKIE_CONSENT_CL_VERSION}/dist`;
 const selfHostBaseUrl = "/dist";
 const defaultFontFamily = 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
 

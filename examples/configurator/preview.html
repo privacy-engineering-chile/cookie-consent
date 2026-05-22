@@ -208,7 +208,11 @@
     </main>
 
     <script type="module">
-      import { CookieConsentCL } from "https://cdn.jsdelivr.net/npm/cookie-consent-cl@0.2.0/dist/cookie-consent-cl.es.js";
+      import { COOKIE_CONSENT_CL_VERSION } from "./version.js";
+
+      const { CookieConsentCL } = await import(
+        `https://cdn.jsdelivr.net/npm/cookie-consent-cl@${COOKIE_CONSENT_CL_VERSION}/dist/cookie-consent-cl.es.js`
+      );
 
       const defaultConfig = {
         siteId: "preview-site",
