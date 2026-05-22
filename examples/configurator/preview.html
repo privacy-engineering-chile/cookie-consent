@@ -140,29 +140,6 @@
         background: #ffffff;
       }
 
-      .preview-restart {
-        position: fixed;
-        z-index: 2147483005;
-        top: 18px;
-        right: 18px;
-        min-height: 38px;
-        border: 1px solid rgba(148, 163, 184, 0.42);
-        border-radius: 999px;
-        padding: 8px 14px;
-        background: rgba(255, 255, 255, 0.88);
-        color: #0f172a;
-        font: inherit;
-        font-size: 0.9rem;
-        font-weight: 850;
-        cursor: pointer;
-        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.14);
-        backdrop-filter: blur(14px);
-      }
-
-      .preview-restart:hover {
-        background: #ffffff;
-      }
-
       .content-card span {
         height: 12px;
         margin-bottom: 12px;
@@ -229,7 +206,6 @@
         </section>
       </div>
     </main>
-    <button class="preview-restart" type="button" id="preview-restart">Reiniciar preview</button>
 
     <script type="module">
       import { CookieConsentCL } from "https://cdn.jsdelivr.net/npm/cookie-consent-cl@0.2.0/dist/cookie-consent-cl.es.js";
@@ -383,10 +359,6 @@
         },
         true
       );
-
-      document.querySelector("#preview-restart").addEventListener("click", () => {
-        window.parent.postMessage({ type: "cccl-preview-restart" }, "*");
-      });
 
       applyDesign({ borderRadius: 18 });
       CookieConsentCL.init(defaultConfig);

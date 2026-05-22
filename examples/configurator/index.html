@@ -7,6 +7,18 @@
     <link rel="stylesheet" href="./configurator.css" />
   </head>
   <body>
+    <section class="mobile-gate" aria-labelledby="mobile-gate-title">
+      <div class="mobile-gate__card">
+        <p class="eyebrow">cookie-consent-cl</p>
+        <h1 id="mobile-gate-title">El configurador está disponible en escritorio.</h1>
+        <p>Para editar y previsualizar el banner usa una pantalla más grande.</p>
+        <div class="mobile-gate__actions">
+          <a class="button button--primary" href="../../README.md">Ver documentación</a>
+          <a class="button button--ghost" href="https://www.npmjs.com/package/cookie-consent-cl">Ver paquete npm</a>
+        </div>
+      </div>
+    </section>
+
     <main class="workspace" id="configurador">
       <form class="wizard" id="config-form">
         <div class="wizard__header">
@@ -321,6 +333,19 @@
       </form>
 
       <aside class="preview-shell" aria-label="Vista previa">
+        <div class="preview-toolbar" aria-label="Controles de vista previa">
+          <div class="preview-device-toggle" role="group" aria-label="Tamaño de vista previa">
+            <button class="preview-device-toggle__button is-active" type="button" data-preview-viewport="desktop" aria-pressed="true" aria-label="Vista desktop">
+              <span class="device-icon device-icon--desktop" aria-hidden="true"></span>
+              <span>Desktop</span>
+            </button>
+            <button class="preview-device-toggle__button" type="button" data-preview-viewport="mobile" aria-pressed="false" aria-label="Vista móvil">
+              <span class="device-icon device-icon--mobile" aria-hidden="true"></span>
+              <span>Móvil</span>
+            </button>
+          </div>
+          <button class="preview-restart-control" type="button" id="preview-restart-control">Reiniciar</button>
+        </div>
         <div class="preview-card">
           <div class="preview-frame-wrap">
             <iframe id="preview-frame" title="Vista previa cookie-consent-cl" src="./preview.html"></iframe>

@@ -12,6 +12,7 @@ const integrationCode = document.querySelector("#integration-code");
 const installCode = document.querySelector("#install-code");
 const installCodeWrap = document.querySelector("#install-code-wrap");
 const previewFrame = document.querySelector("#preview-frame");
+const previewShell = document.querySelector(".preview-shell");
 const copyStatus = document.querySelector("#copy-status");
 const toggleCodeButton = document.querySelector("#toggle-code");
 const installStepAssets = document.querySelector("#install-step-assets");
@@ -33,6 +34,7 @@ document.body.scrollTop = 0;
 
 let previewReady = false;
 let previewMode = "banner";
+let previewViewport = "desktop";
 let codeExpanded = false;
 let installMethod = "cdn";
 
@@ -1193,6 +1195,15 @@ function resetPreview() {
   sendPreview({ restart: true, mode: "banner" });
 }
 
+function renderPreviewViewport() {
+  previewShell.dataset.previewViewport = previewViewport;
+  document.querySelectorAll(".preview-device-toggle__button[data-preview-viewport]").forEach((button) => {
+    const isSelected = button.dataset.previewViewport === previewViewport;
+    button.classList.toggle("is-active", isSelected);
+    button.setAttribute("aria-pressed", String(isSelected));
+  });
+}
+
 function setupEvents() {
   form.addEventListener("input", (event) => {
     if (event.target.closest("#tool-map")) return;
@@ -1246,6 +1257,15 @@ function setupEvents() {
       addToolIntegration(addTool.closest("[data-tool-type]"));
     }
   });
+
+  document.querySelectorAll(".preview-device-toggle__button[data-preview-viewport]").forEach((button) => {
+    button.addEventListener("click", () => {
+      previewViewport = button.dataset.previewViewport;
+      renderPreviewViewport();
+    });
+  });
+
+  document.querySelector("#preview-restart-control").addEventListener("click", resetPreview);
 
   document.querySelector("#add-category").addEventListener("click", addCategory);
 
@@ -1305,6 +1325,7 @@ applySiteProfile(state.siteProfile);
 applyPreset();
 renderCategories();
 renderIntegrations();
+renderPreviewViewport();
 setupEvents();
 updateAll({ restart: true });
 schedulePreviewSync({ restart: true });
