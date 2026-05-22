@@ -114,7 +114,10 @@
 .cccl-actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: flex-start;
   gap: 8px;
+  min-width: 0;
 }
 
 .cccl-actions--modal {
@@ -604,15 +607,6 @@
 }
 
 @media (min-width: 760px) {
-  .cccl-banner {
-    grid-template-columns: 1fr auto;
-    align-items: center;
-  }
-
-  .cccl-actions {
-    justify-content: flex-end;
-  }
-
   .cccl-preferences-notice {
     grid-template-columns: 1fr auto;
     align-items: center;

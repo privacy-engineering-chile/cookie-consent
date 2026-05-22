@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Gestor open source de consentimiento de cookies para sitios web chilenos. Sin backend, sin cuentas y sin tracking propio."
+      content="Free cookie banner para pedir consentimiento sin dark patterns. Hecho por Privacy Engineering Chile."
     />
-    <title>cookie-consent-cl · Consentimiento de cookies para Chile</title>
+    <title>Free cookie banner · Privacy Engineering Chile</title>
     <style>
       :root {
         color: #0f172a;
-        background: #f8fafc;
+        background: #eef4ff;
         font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       }
 
@@ -19,12 +19,32 @@
         box-sizing: border-box;
       }
 
+      html,
       body {
+        height: 100%;
+      }
+
+      body {
+        display: grid;
+        min-height: 100%;
         margin: 0;
+        overflow: hidden;
         background:
-          radial-gradient(circle at 14% 12%, rgba(37, 99, 235, 0.14), transparent 24rem),
-          radial-gradient(circle at 88% 18%, rgba(16, 185, 129, 0.12), transparent 22rem),
-          linear-gradient(180deg, #ffffff 0%, #f8fafc 52%, #eef6ff 100%);
+          radial-gradient(circle at 15% 16%, rgba(37, 99, 235, 0.2), transparent 25rem),
+          radial-gradient(circle at 84% 22%, rgba(16, 185, 129, 0.16), transparent 23rem),
+          linear-gradient(135deg, #f8fbff 0%, #eef6ff 48%, #f6fbf8 100%);
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background-image:
+          linear-gradient(rgba(37, 99, 235, 0.045) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(37, 99, 235, 0.045) 1px, transparent 1px);
+        background-size: 44px 44px;
+        mask-image: radial-gradient(circle at 50% 50%, #000 0%, transparent 74%);
       }
 
       a {
@@ -32,79 +52,84 @@
       }
 
       .page {
-        width: min(1120px, calc(100% - 32px));
+        display: grid;
+        width: min(1140px, calc(100% - 36px));
+        min-height: 100%;
         margin: 0 auto;
-      }
-
-      .nav {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 20px;
         padding: 22px 0;
       }
 
-      .brand {
+      .panel {
+        position: relative;
+        align-self: center;
+        overflow: hidden;
+        border: 1px solid rgba(148, 163, 184, 0.34);
+        border-radius: 38px;
+        background: rgba(255, 255, 255, 0.76);
+        box-shadow: 0 36px 120px rgba(15, 23, 42, 0.14);
+        backdrop-filter: blur(22px);
+      }
+
+      .panel::after {
+        content: "";
+        position: absolute;
+        right: -8rem;
+        bottom: -10rem;
+        width: 28rem;
+        height: 28rem;
+        border-radius: 999px;
+        background: rgba(37, 99, 235, 0.08);
+        pointer-events: none;
+      }
+
+      .shell {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: minmax(0, 0.86fr) minmax(390px, 1.14fr);
+        gap: clamp(26px, 4vw, 52px);
+        align-items: center;
+        padding: clamp(28px, 4.8vw, 56px);
+      }
+
+      .credit {
         display: inline-flex;
         align-items: center;
         gap: 10px;
-        font-weight: 900;
+        margin-bottom: 24px;
+        color: #334155;
+        font-size: 0.9rem;
+        font-weight: 850;
       }
 
-      .brand-mark {
+      .mark {
         width: 34px;
         height: 34px;
         border-radius: 12px;
         background: linear-gradient(135deg, #2563eb, #10b981);
-      }
-
-      .nav-links {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        color: #475569;
-        font-size: 0.95rem;
-        font-weight: 750;
-      }
-
-      .hero {
-        display: grid;
-        grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
-        gap: 42px;
-        align-items: center;
-        min-height: calc(100vh - 90px);
-        padding: 44px 0 72px;
-      }
-
-      .eyebrow {
-        margin: 0 0 14px;
-        color: #2563eb;
-        font-size: 0.82rem;
-        font-weight: 900;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
+        box-shadow: 0 12px 26px rgba(37, 99, 235, 0.24);
       }
 
       h1 {
-        max-width: 12ch;
+        max-width: 9ch;
         margin: 0;
-        font-size: clamp(2.55rem, 8vw, 5.5rem);
-        line-height: 0.96;
+        font-size: clamp(3.4rem, 9vw, 7.4rem);
+        line-height: 0.9;
         letter-spacing: 0;
       }
 
       .lead {
-        max-width: 64ch;
+        max-width: 34ch;
         margin: 24px 0 0;
         color: #475569;
-        font-size: clamp(1.05rem, 2vw, 1.25rem);
-        line-height: 1.6;
+        font-size: clamp(1.1rem, 2vw, 1.35rem);
+        line-height: 1.42;
       }
 
       .actions {
         display: flex;
         flex-wrap: wrap;
-        gap: 12px;
+        gap: 11px;
         margin-top: 30px;
       }
 
@@ -112,61 +137,54 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-height: 46px;
+        min-height: 48px;
         border: 1px solid #cbd5e1;
         border-radius: 999px;
         padding: 12px 18px;
-        background: #ffffff;
+        background: rgba(255, 255, 255, 0.82);
         color: #0f172a;
-        font-weight: 850;
+        font-weight: 900;
         text-decoration: none;
+        transition:
+          transform 0.18s ease,
+          box-shadow 0.18s ease,
+          border-color 0.18s ease;
+      }
+
+      .button:hover {
+        border-color: #2563eb;
+        transform: translateY(-1px);
+        box-shadow: 0 16px 36px rgba(15, 23, 42, 0.11);
       }
 
       .button--primary {
         border-color: #2563eb;
-        background: #2563eb;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
         color: #ffffff;
-        box-shadow: 0 18px 42px rgba(37, 99, 235, 0.26);
+        box-shadow: 0 18px 42px rgba(37, 99, 235, 0.25);
       }
 
-      .badges {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 26px;
+      .visual {
+        position: relative;
+        display: grid;
+        gap: 16px;
       }
 
-      .badge {
-        border: 1px solid #dbe3ef;
-        border-radius: 999px;
-        padding: 7px 10px;
-        background: rgba(255, 255, 255, 0.74);
-        color: #334155;
-        font-size: 0.86rem;
-        font-weight: 800;
-      }
-
-      .preview {
-        border: 1px solid #dbe3ef;
-        border-radius: 28px;
-        padding: 20px;
-        background: rgba(255, 255, 255, 0.78);
-        box-shadow: 0 30px 90px rgba(15, 23, 42, 0.12);
-      }
-
-      .browser {
+      .demo-window {
         overflow: hidden;
-        border: 1px solid #e2e8f0;
-        border-radius: 22px;
-        background: #f8fafc;
+        border: 1px solid rgba(148, 163, 184, 0.32);
+        border-radius: 30px;
+        background: rgba(248, 250, 252, 0.92);
+        box-shadow: 0 28px 80px rgba(15, 23, 42, 0.14);
       }
 
-      .browser-top {
+      .demo-top {
         display: flex;
-        gap: 7px;
-        padding: 14px;
+        align-items: center;
+        gap: 8px;
+        padding: 15px 18px;
         border-bottom: 1px solid #e2e8f0;
-        background: #ffffff;
+        background: rgba(255, 255, 255, 0.86);
       }
 
       .dot {
@@ -176,218 +194,257 @@
         background: #cbd5e1;
       }
 
-      .browser-body {
+      .demo-body {
         display: grid;
         gap: 14px;
-        padding: 22px;
-      }
-
-      .line,
-      .card-line {
-        display: block;
-        border-radius: 999px;
-        background: #dbeafe;
+        padding: clamp(18px, 3vw, 28px);
       }
 
       .line {
+        display: block;
+        height: 14px;
+        border-radius: 999px;
+        background: #bfdbfe;
+      }
+
+      .line:nth-child(1) {
         width: 74%;
-        height: 18px;
       }
 
       .line:nth-child(2) {
         width: 48%;
-        height: 12px;
+        height: 10px;
+        background: #dbeafe;
       }
 
-      .mock-banner {
+      .banner {
         display: grid;
-        gap: 12px;
-        margin-top: 22px;
+        gap: 13px;
+        margin-top: 12px;
         border: 1px solid #dbe3ef;
-        border-radius: 18px;
-        padding: 16px;
+        border-radius: 22px;
+        padding: clamp(16px, 3vw, 22px);
         background: #ffffff;
-        box-shadow: 0 18px 48px rgba(15, 23, 42, 0.12);
+        box-shadow: 0 22px 54px rgba(15, 23, 42, 0.12);
       }
 
-      .mock-banner h2 {
-        margin: 0;
-        font-size: 1rem;
+      .banner strong {
+        font-size: 1.05rem;
       }
 
-      .mock-banner p {
+      .banner p {
         margin: 0;
         color: #64748b;
-        font-size: 0.9rem;
-        line-height: 1.45;
+        font-size: 0.94rem;
+        line-height: 1.42;
       }
 
-      .mock-actions {
-        display: flex;
-        flex-wrap: wrap;
+      .banner-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
         gap: 8px;
       }
 
-      .mock-actions span {
+      .banner-actions span {
         border: 1px solid #2563eb;
-        border-radius: 8px;
-        padding: 8px 10px;
+        border-radius: 10px;
+        padding: 9px 10px;
         color: #2563eb;
         font-size: 0.82rem;
-        font-weight: 850;
+        font-weight: 900;
+        text-align: center;
       }
 
-      .section {
-        padding: 58px 0;
+      .cookie-icon {
+        position: absolute;
+        right: 20px;
+        bottom: -24px;
+        display: grid;
+        place-items: center;
+        width: 56px;
+        height: 56px;
+        border: 1px solid #2563eb;
+        border-radius: 999px;
+        background: #ffffff;
+        color: #2563eb;
+        box-shadow: 0 18px 42px rgba(15, 23, 42, 0.18);
       }
 
-      .section h2 {
-        margin: 0 0 14px;
-        font-size: clamp(1.8rem, 3vw, 2.6rem);
+      .cookie-icon::before {
+        content: "";
+        width: 31px;
+        height: 31px;
+        border-radius: 999px;
+        background:
+          radial-gradient(circle at 36% 36%, #2563eb 0 8%, transparent 9%),
+          radial-gradient(circle at 62% 58%, #2563eb 0 8%, transparent 9%),
+          radial-gradient(circle at 38% 68%, #2563eb 0 7%, transparent 8%),
+          radial-gradient(circle at 68% 28%, transparent 0 18%, #2563eb 19% 100%);
+        clip-path: circle(50%);
+        opacity: 0.95;
       }
 
-      .grid {
+      .ethics {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 16px;
-        margin-top: 24px;
+        gap: 8px;
+        margin: 22px 0 0;
+        padding: 0;
+        list-style: none;
       }
 
-      .card {
-        border: 1px solid #dbe3ef;
-        border-radius: 22px;
-        padding: 20px;
-        background: rgba(255, 255, 255, 0.82);
+      .ethics li {
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        border-radius: 16px;
+        padding: 10px 11px;
+        background: rgba(255, 255, 255, 0.7);
+        color: #334155;
+        font-size: 0.86rem;
+        font-weight: 850;
+        line-height: 1.25;
       }
 
-      .card h3 {
-        margin: 0 0 8px;
-      }
-
-      .card p {
-        margin: 0;
+      .disclaimer {
+        position: relative;
+        z-index: 1;
+        border-top: 1px solid rgba(148, 163, 184, 0.22);
+        padding: 15px clamp(22px, 4vw, 56px);
         color: #64748b;
-        line-height: 1.55;
+        font-size: 0.88rem;
+        line-height: 1.4;
       }
 
-      .notice {
-        border: 1px solid #f59e0b;
-        border-radius: 22px;
-        padding: 18px;
-        background: #fffbeb;
-        color: #451a03;
-        line-height: 1.55;
-      }
+      @media (max-width: 900px) {
+        html,
+        body {
+          height: auto;
+        }
 
-      footer {
-        padding: 34px 0 46px;
-        color: #64748b;
-      }
+        body {
+          overflow: auto;
+          overflow-x: hidden;
+        }
 
-      @media (max-width: 860px) {
-        .hero,
-        .grid {
+        .page {
+          width: 100%;
+          min-height: 100vh;
+          padding: 16px 12px;
+          overflow: hidden;
+        }
+
+        .panel {
+          width: 100%;
+          max-width: 100%;
+          border-radius: 30px;
+          overflow: hidden;
+        }
+
+        .shell {
+          grid-template-columns: 1fr;
+          padding: 24px;
+          overflow: hidden;
+        }
+
+        .shell > *,
+        .visual,
+        .demo-window {
+          min-width: 0;
+          max-width: 100%;
+        }
+
+        h1,
+        .lead,
+        .credit {
+          width: 100%;
+          max-width: 100%;
+          overflow-wrap: anywhere;
+          word-break: break-word;
+        }
+
+        .actions {
+          display: grid;
           grid-template-columns: 1fr;
         }
 
-        .hero {
-          min-height: auto;
+        .button {
+          width: 100%;
         }
 
-        .nav {
-          align-items: flex-start;
-          flex-direction: column;
+        .visual {
+          overflow: hidden;
+        }
+
+        .ethics {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 520px) {
+        .shell {
+          padding: 20px;
+        }
+
+        h1 {
+          font-size: clamp(3rem, 18vw, 4rem);
+        }
+
+        .banner-actions {
+          grid-template-columns: 1fr;
+        }
+
+        .cookie-icon {
+          right: 16px;
         }
       }
     </style>
   </head>
   <body>
-    <div class="page">
-      <nav class="nav" aria-label="Principal">
-        <a class="brand" href="./">
-          <span class="brand-mark" aria-hidden="true"></span>
-          <span>cookie-consent-cl</span>
-        </a>
-        <div class="nav-links">
-          <a href="./examples/configurator/">Configurador</a>
-          <a href="./README.md">Documentacion</a>
-          <a href="https://github.com/privacy-engineering-chile/cookie-consent">GitHub</a>
-          <a href="https://www.npmjs.com/package/cookie-consent-cl">npm</a>
-        </div>
-      </nav>
-
-      <main>
-        <section class="hero">
+    <main class="page">
+      <section class="panel" aria-labelledby="title">
+        <div class="shell">
           <div>
-            <p class="eyebrow">Open source · Chile · Privacidad por diseño</p>
-            <h1>Consentimiento de cookies claro y configurable</h1>
-            <p class="lead">
-              Gestor open source de consentimiento de cookies para sitios web chilenos. Sin backend. Sin cuentas.
-              Sin tracking propio. Pensado para equipos técnicos, PYMEs, civic tech y organizaciones que quieren
-              implementar experiencias claras y sin dark patterns.
-            </p>
-            <div class="actions">
-              <a class="button button--primary" href="./examples/configurator/">Crear banner de cookies</a>
-              <a class="button" href="https://github.com/privacy-engineering-chile/cookie-consent">Ver en GitHub</a>
-            </div>
-            <div class="badges" aria-label="Caracteristicas">
-              <span class="badge">CDN via npm + jsDelivr</span>
-              <span class="badge">Google Consent Mode v2</span>
-              <span class="badge">Script blocking</span>
-              <span class="badge">MIT</span>
-            </div>
+            <p class="credit"><span class="mark" aria-hidden="true"></span> Hecho por Privacy Engineering Chile</p>
+            <h1 id="title">Free cookie banner</h1>
+            <p class="lead">Para sitios que quieren pedir consentimiento sin dark patterns.</p>
+
+            <nav class="actions" aria-label="Acciones principales">
+              <a class="button button--primary" href="./examples/configurator/">Crear banner</a>
+              <a class="button" href="https://github.com/privacy-engineering-chile/cookie-consent">GitHub</a>
+              <a class="button" href="https://www.npmjs.com/package/cookie-consent-cl">npm</a>
+            </nav>
           </div>
 
-          <div class="preview" aria-label="Vista conceptual del banner">
-            <div class="browser">
-              <div class="browser-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-              <div class="browser-body">
+          <div class="visual" aria-label="Vista conceptual del banner">
+            <div class="demo-window">
+              <div class="demo-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+              <div class="demo-body">
                 <span class="line"></span>
                 <span class="line"></span>
-                <div class="mock-banner">
-                  <h2>Preferencias de cookies</h2>
-                  <p>Usamos cookies necesarias para que este sitio funcione. Con tu autorizacion, podemos usar otras categorias solo si las autorizas.</p>
-                  <div class="mock-actions">
-                    <span>Aceptar todas</span>
-                    <span>Rechazar no necesarias</span>
+                <div class="banner">
+                  <strong>Preferencias de cookies</strong>
+                  <p>Las necesarias funcionan siempre. Las demás solo si la persona autoriza.</p>
+                  <div class="banner-actions" aria-hidden="true">
+                    <span>Aceptar</span>
+                    <span>Rechazar</span>
                     <span>Configurar</span>
                   </div>
                 </div>
               </div>
             </div>
+            <span class="cookie-icon" aria-hidden="true"></span>
           </div>
-        </section>
 
-        <section class="section">
-          <h2>Que incluye</h2>
-          <div class="grid">
-            <article class="card">
-              <h3>Configurador visual</h3>
-              <p>Genera una configuracion inicial, prueba el flujo y copia el codigo de instalacion con CDN o self-host.</p>
-            </article>
-            <article class="card">
-              <h3>Buenas practicas</h3>
-              <p>Rechazar es tan visible como aceptar, las categorias opcionales parten apagadas y las preferencias se pueden cambiar.</p>
-            </article>
-            <article class="card">
-              <h3>Integraciones bloqueadas</h3>
-              <p>Prepara snippets con <code>type="text/plain"</code> y <code>data-cookie-consent</code> para cargar herramientas despues del consentimiento.</p>
-            </article>
-          </div>
-        </section>
+          <ul class="ethics" aria-label="Principios de diseño ético">
+            <li>Aceptar y rechazar con el mismo peso.</li>
+            <li>Opcionales apagadas por defecto.</li>
+            <li>Preferencias reabribles.</li>
+          </ul>
+        </div>
 
-        <section class="section">
-          <div class="notice">
-            Este proyecto no constituye asesoria legal ni garantiza cumplimiento normativo por si solo. Es una
-            herramienta tecnica para facilitar una implementacion mas clara, especifica y auditable del consentimiento
-            de cookies.
-          </div>
-        </section>
-      </main>
-
-      <footer>
-        MIT License · Privacy Engineering Chile · cookie-consent-cl v0.2.0
-      </footer>
-    </div>
+        <p class="disclaimer">
+          Herramienta técnica. No reemplaza asesoría legal ni garantiza cumplimiento por sí sola.
+        </p>
+      </section>
+    </main>
   </body>
 </html>

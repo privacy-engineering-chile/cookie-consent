@@ -2,6 +2,18 @@
 
 Todas las notas importantes de este proyecto se documentan en este archivo.
 
+## [0.2.2] - 2026-05-22
+
+### Cambiado
+
+- El banner del core ahora mantiene los botones bajo el texto en desktop y mobile.
+- Se evita que el texto del banner quede comprimido cuando hay tres acciones visibles.
+
+### Compatibilidad
+
+- No hay cambios incompatibles.
+- No cambia la API publica.
+
 ## [0.2.1] - 2026-05-22
 
 ### Agregado
