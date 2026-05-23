@@ -211,6 +211,7 @@
       import { COOKIE_CONSENT_CL_VERSION } from "./version.js";
 
       const { CookieConsentCL } = await import(
+        /* @vite-ignore */
         `https://cdn.jsdelivr.net/npm/cookie-consent-cl@${COOKIE_CONSENT_CL_VERSION}/dist/cookie-consent-cl.es.js`
       );
 
